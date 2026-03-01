@@ -1,0 +1,38 @@
+{
+  "POL-001": {
+    "id": "POL-001",
+    "version": "1.0.0",
+    "category": "credentials",
+    "active": true,
+    "action": "BLOCK",
+    "description": "Block any prompt containing credentials or secrets",
+    "thresholds": { "strict": 0.3, "balanced": 0.6, "fast": 0.8 }
+  },
+  "POL-002": {
+    "id": "POL-002",
+    "version": "1.0.0",
+    "category": "pii",
+    "active": true,
+    "action": "REWRITE",
+    "description": "Redact personally identifiable information",
+    "thresholds": { "strict": 0.4, "balanced": 0.6, "fast": 0.75 }
+  },
+  "POL-003": {
+    "id": "POL-003",
+    "version": "1.0.0",
+    "category": "trade_secret",
+    "active": true,
+    "action": "BLOCK",
+    "description": "Block prompts containing trade secrets or formulas",
+    "thresholds": { "strict": 0.2, "balanced": 0.5, "fast": 0.7 }
+  },
+  "POL-004": {
+    "id": "POL-004",
+    "version": "1.0.0",
+    "category": "financial",
+    "active": true,
+    "action": "FLAG",
+    "description": "Flag prompts with sensitive financial data",
+    "thresholds": { "strict": 0.35, "balanced": 0.55, "fast": 0.7 }
+  }
+}
