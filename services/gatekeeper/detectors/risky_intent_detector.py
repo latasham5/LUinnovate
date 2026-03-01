@@ -12,8 +12,22 @@ async def detect_risky_intent(raw_prompt: str) -> float:
 
     Returns a risk score from 0.0 (safe) to 1.0 (dangerous).
     """
-    # TODO: Call integrations.huggingface_client.classify_toxicity(raw_prompt)
-    # TODO: Return the toxicity/risk score
+    try:
+        from integrations.huggingface_client import classify_toxicity
+        score = await classify_toxicity(raw_prompt)
+        return score
+    except Exception:
+        pass
 
-    # Placeholder — returns 0.0 (safe) until HF integration is wired
-    return 0.0
+    # Fallback: keyword-based risky intent detection
+    RISKY_PHRASES = [
+        "bypass", "circumvent", "ignore restrictions", "override policy",
+        "hack", "exploit", "jailbreak", "pretend you are",
+        "ignore your instructions", "act as if", "disregard",
+    ]
+    prompt_lower = raw_prompt.lower()
+    risk = 0.0
+    for phrase in RISKY_PHRASES:
+        if phrase in prompt_lower:
+            risk += 0.3
+    return min(risk, 1.0)

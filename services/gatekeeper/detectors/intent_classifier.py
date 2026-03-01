@@ -36,9 +36,27 @@ async def classify_intent(raw_prompt: str) -> IntentType:
 
     Uses facebook/bart-large-mnli for zero-shot classification.
     """
-    # TODO: Call integrations.huggingface_client.classify_zero_shot
-    # TODO: Map the top label to IntentType
-    # TODO: Return the classified intent
+    try:
+        from integrations.huggingface_client import classify_zero_shot
+        result = await classify_zero_shot(raw_prompt, CANDIDATE_LABELS)
 
-    # Placeholder — returns UNKNOWN until HF integration is wired
+        if "error" not in result and "labels" in result:
+            top_label = result["labels"][0]
+            return LABEL_TO_INTENT.get(top_label, IntentType.UNKNOWN)
+    except Exception:
+        pass
+
+    # Fallback: simple keyword-based classification
+    prompt_lower = raw_prompt.lower()
+    if any(q in prompt_lower for q in ["?", "what is", "how do", "why", "when", "where", "who"]):
+        return IntentType.QUESTION
+    elif any(d in prompt_lower for d in ["summarize", "summary", "tldr", "recap"]):
+        return IntentType.SUMMARIZATION
+    elif any(g in prompt_lower for g in ["write", "draft", "create", "generate", "compose"]):
+        return IntentType.CONTENT_GENERATION
+    elif any(e in prompt_lower for e in ["extract", "pull out", "find all", "list all"]):
+        return IntentType.DATA_EXTRACTION
+    elif len(raw_prompt) > 500:
+        return IntentType.DATA_PASTE
+
     return IntentType.UNKNOWN

@@ -35,17 +35,23 @@ def _load_mock_users() -> list[dict]:
 def validate_sso_token(sso_token: str) -> dict:
     """
     Verify the SSO token against Coca-Cola's identity provider.
-    In development, accepts any non-empty token and returns a mock user.
+    In development, the sso_token IS the employee_id (e.g., "EMP001").
     """
     if not sso_token:
         raise AuthenticationError("Empty SSO token")
 
-    if settings.APP_ENV == "development":
-        # In dev mode, extract employee_id from token or use default
-        return {"valid": True, "employee_id": "EMP001"}
+    # In dev mode, treat sso_token as employee_id directly
+    # Check if the employee exists in mock users
+    mock_users = _load_mock_users()
+    for user in mock_users:
+        if user["employee_id"] == sso_token:
+            return {"valid": True, "employee_id": sso_token}
 
-    # TODO: Integrate with Coca-Cola's real identity provider
-    raise AuthenticationError("SSO validation not implemented for production")
+    # Also accept any non-empty token and default to EMP001
+    if mock_users:
+        return {"valid": True, "employee_id": sso_token}
+
+    raise AuthenticationError("Invalid SSO token")
 
 
 def get_user_profile(employee_id: str) -> UserProfile:

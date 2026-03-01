@@ -13,6 +13,7 @@ PUBLIC_ROUTES = [
     "/docs",
     "/openapi.json",
     "/redoc",
+    "/api/v1/auth/login",
 ]
 
 
@@ -20,8 +21,14 @@ class AuthMiddleware(BaseHTTPMiddleware):
     """Middleware to validate SSO tokens on protected routes."""
 
     async def dispatch(self, request: Request, call_next):
-        # Skip auth for public routes
-        if request.url.path in PUBLIC_ROUTES:
+        path = request.url.path
+
+        # Skip auth for public routes (exact match or without trailing slash)
+        if path in PUBLIC_ROUTES or path.rstrip("/") in PUBLIC_ROUTES:
+            return await call_next(request)
+
+        # Skip auth for docs/OpenAPI paths
+        if path.startswith("/docs") or path.startswith("/redoc") or path.startswith("/openapi"):
             return await call_next(request)
 
         # Skip auth for OPTIONS (CORS preflight)

@@ -22,20 +22,23 @@ async def classify_zero_shot(text: str, candidate_labels: list[str]) -> dict:
     """
     url = f"{HF_API_URL}/{HF_INTENT_MODEL}"
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            url,
-            headers={"Authorization": f"Bearer {settings.HUGGINGFACE_API_KEY}"},
-            json={
-                "inputs": text,
-                "parameters": {"candidate_labels": candidate_labels},
-            },
-        )
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                url,
+                headers={"Authorization": f"Bearer {settings.HUGGINGFACE_API_KEY}"},
+                json={
+                    "inputs": text,
+                    "parameters": {"candidate_labels": candidate_labels},
+                },
+            )
 
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": response.text, "status_code": response.status_code}
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return {"error": response.text, "status_code": response.status_code}
+    except Exception:
+        return {"error": "HuggingFace API timeout", "labels": [], "scores": []}
 
 
 async def classify_toxicity(text: str) -> float:
@@ -47,22 +50,23 @@ async def classify_toxicity(text: str) -> float:
     """
     url = f"{HF_API_URL}/{HF_RISKY_INTENT_MODEL}"
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            url,
-            headers={"Authorization": f"Bearer {settings.HUGGINGFACE_API_KEY}"},
-            json={"inputs": text},
-        )
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                url,
+                headers={"Authorization": f"Bearer {settings.HUGGINGFACE_API_KEY}"},
+                json={"inputs": text},
+            )
 
-        if response.status_code == 200:
-            result = response.json()
-            # Extract the toxicity score from the response
-            if isinstance(result, list) and len(result) > 0:
-                classifications = result[0] if isinstance(result[0], list) else result
-                for item in classifications:
-                    if item.get("label", "").lower() == "toxic":
-                        return item.get("score", 0.0)
-            return 0.0
-        else:
-            # On error, return 0.0 (safe) to avoid blocking on API failures
-            return 0.0
+            if response.status_code == 200:
+                result = response.json()
+                if isinstance(result, list) and len(result) > 0:
+                    classifications = result[0] if isinstance(result[0], list) else result
+                    for item in classifications:
+                        if item.get("label", "").lower() == "toxic":
+                            return item.get("score", 0.0)
+                return 0.0
+            else:
+                return 0.0
+    except Exception:
+        return 0.0

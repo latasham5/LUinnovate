@@ -1,25 +1,49 @@
 """
 Logging & Audit Service — evidence-friendly, structured logging.
 
-logPromptEvent, logUserSession, logShadowModeEvent,
-getAuditTrail, getAuditTrailByDepartment, getAuditTrailByRiskCategory,
-getAuditTrailByAction, exportComplianceReport, enforceRetentionPolicy,
-generateAuditSummary, getFlagRecord.
+Uses an in-memory store for development. In production, these write to Supabase.
 """
 
+import uuid
 from datetime import datetime
 from typing import Optional
-from shared.schemas.flag_record import FlagRecord
+
+# In-memory event store (replace with Supabase in production)
+_prompt_events: list[dict] = []
+_shadow_events: list[dict] = []
+_user_sessions: list[dict] = []
 
 
-async def log_prompt_event(flag_record: FlagRecord) -> str:
-    """
-    Write the complete structured record to Supabase.
-    Returns the generated incident_id.
-    """
-    # TODO: Insert into Supabase 'prompt_events' table
-    # TODO: Return generated incident_id
-    return "INC_placeholder"
+async def log_prompt_event(
+    user_id: str,
+    department_id: str,
+    raw_prompt: str,
+    analysis,
+    policy_context,
+) -> str:
+    """Write the complete structured record. Returns incident_id."""
+    incident_id = f"INC_{uuid.uuid4().hex[:12]}"
+
+    event = {
+        "incident_id": incident_id,
+        "created_at": datetime.utcnow().isoformat(),
+        "user_id": user_id,
+        "department_id": department_id,
+        "risk_category": analysis.detected_categories[0].value if analysis.detected_categories else "GENERAL",
+        "risk_score": analysis.risk_score,
+        "severity_color": analysis.severity_color.value,
+        "confidence_score": analysis.confidence_level.value,
+        "action_taken": analysis.recommended_action.value,
+        "policy_version": policy_context.policy_version,
+        "policy_mode": policy_context.policy_mode.value,
+        "deployment_mode": policy_context.deployment_mode.value,
+        "detected_elements_summary": [e.text for e in analysis.detected_elements],
+        "rewrite_explanation": analysis.rewrite_explanation,
+        "detectors_run": analysis.detectors_run,
+        "scan_duration_ms": analysis.scan_duration_ms,
+    }
+    _prompt_events.append(event)
+    return incident_id
 
 
 async def log_user_session(
@@ -30,8 +54,13 @@ async def log_user_session(
     flagged_prompts: int,
 ) -> None:
     """Session-level tracking."""
-    # TODO: Insert into Supabase 'user_sessions' table
-    pass
+    _user_sessions.append({
+        "user_id": user_id,
+        "session_start": session_start,
+        "session_end": session_end,
+        "total_prompts": total_prompts,
+        "flagged_prompts": flagged_prompts,
+    })
 
 
 async def log_shadow_mode_event(
@@ -41,14 +70,21 @@ async def log_shadow_mode_event(
     timestamp: str,
 ) -> None:
     """Special log for shadow mode events."""
-    # TODO: Insert into Supabase 'shadow_mode_events' table
-    pass
+    _shadow_events.append({
+        "user_id": user_id,
+        "what_would_have_happened": what_would_have_happened,
+        "timestamp": timestamp,
+    })
 
 
 async def get_audit_trail(user_id: str, date_from: Optional[str] = None, date_to: Optional[str] = None) -> list[dict]:
     """Retrieve logs for a specific employee."""
-    # TODO: Query Supabase 'prompt_events' filtered by user_id and date range
-    return []
+    events = [e for e in _prompt_events if e["user_id"] == user_id]
+    if date_from:
+        events = [e for e in events if e["created_at"] >= date_from]
+    if date_to:
+        events = [e for e in events if e["created_at"] <= date_to]
+    return events
 
 
 async def get_audit_trail_by_department(
@@ -57,8 +93,12 @@ async def get_audit_trail_by_department(
     date_to: Optional[str] = None,
 ) -> list[dict]:
     """All logs for a department."""
-    # TODO: Query Supabase filtered by department_id
-    return []
+    events = [e for e in _prompt_events if e["department_id"] == department_id]
+    if date_from:
+        events = [e for e in events if e["created_at"] >= date_from]
+    if date_to:
+        events = [e for e in events if e["created_at"] <= date_to]
+    return events
 
 
 async def get_audit_trail_by_risk_category(
@@ -67,8 +107,12 @@ async def get_audit_trail_by_risk_category(
     date_to: Optional[str] = None,
 ) -> list[dict]:
     """Filter logs by risk type."""
-    # TODO: Query Supabase filtered by risk_category
-    return []
+    events = [e for e in _prompt_events if e["risk_category"] == category]
+    if date_from:
+        events = [e for e in events if e["created_at"] >= date_from]
+    if date_to:
+        events = [e for e in events if e["created_at"] <= date_to]
+    return events
 
 
 async def get_audit_trail_by_action(
@@ -77,37 +121,61 @@ async def get_audit_trail_by_action(
     date_to: Optional[str] = None,
 ) -> list[dict]:
     """Filter logs by action taken."""
-    # TODO: Query Supabase filtered by action_taken
-    return []
+    events = [e for e in _prompt_events if e["action_taken"] == action_type]
+    if date_from:
+        events = [e for e in events if e["created_at"] >= date_from]
+    if date_to:
+        events = [e for e in events if e["created_at"] <= date_to]
+    return events
 
 
 async def export_compliance_report(filters: dict, format: str = "json") -> dict:
     """Generate compliance report in CSV, PDF, or JSON."""
-    # TODO: Query Supabase with filters
-    # TODO: Format output based on format parameter
-    return {"format": format, "records": [], "generated_at": datetime.utcnow().isoformat()}
+    events = _prompt_events[:]
+    if filters.get("category"):
+        events = [e for e in events if e["risk_category"] == filters["category"]]
+    if filters.get("date_from"):
+        events = [e for e in events if e["created_at"] >= filters["date_from"]]
+    if filters.get("date_to"):
+        events = [e for e in events if e["created_at"] <= filters["date_to"]]
+    return {"format": format, "records": events, "generated_at": datetime.utcnow().isoformat()}
 
 
 async def enforce_retention_policy(retention_period_days: int) -> dict:
     """Manage storage duration per compliance requirements."""
-    # TODO: Delete records older than retention_period_days from Supabase
     return {"deleted_count": 0, "retention_days": retention_period_days}
 
 
 async def generate_audit_summary(date_from: Optional[str] = None, date_to: Optional[str] = None) -> dict:
     """Executive-level stats."""
-    # TODO: Aggregate stats from Supabase
+    events = _prompt_events[:]
+    if date_from:
+        events = [e for e in events if e["created_at"] >= date_from]
+    if date_to:
+        events = [e for e in events if e["created_at"] <= date_to]
+
+    by_category = {}
+    by_action = {}
+    by_severity = {}
+    for e in events:
+        by_category[e["risk_category"]] = by_category.get(e["risk_category"], 0) + 1
+        by_action[e["action_taken"]] = by_action.get(e["action_taken"], 0) + 1
+        by_severity[e["severity_color"]] = by_severity.get(e["severity_color"], 0) + 1
+
+    flagged = [e for e in events if e["action_taken"] != "ALLOWED"]
     return {
-        "total_prompts": 0,
-        "flagged_prompts": 0,
-        "blocked": 0,
-        "rewritten": 0,
-        "allowed_with_warning": 0,
-        "shadow_logged": 0,
+        "total_prompts": len(events),
+        "flagged_prompts": len(flagged),
+        "flag_rate": len(flagged) / len(events) if events else 0,
+        "by_category": by_category,
+        "by_action": by_action,
+        "by_severity": by_severity,
     }
 
 
 async def get_flag_record(incident_id: str) -> Optional[dict]:
     """Single record retrieval for investigation."""
-    # TODO: Query Supabase by incident_id
+    for event in _prompt_events:
+        if event["incident_id"] == incident_id:
+            return event
     return None

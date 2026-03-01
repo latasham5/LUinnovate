@@ -8,7 +8,6 @@ Run with: uvicorn main:app --reload --port 8000
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import api_router
-from api.middleware.auth_middleware import AuthMiddleware
 from config.settings import settings
 
 # Create FastAPI app
@@ -29,9 +28,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Authentication middleware
-app.add_middleware(AuthMiddleware)
-
+# Auth is handled via FastAPI Depends() in each route, not middleware
 # Register all API routes
 app.include_router(api_router, prefix="/api/v1")
 

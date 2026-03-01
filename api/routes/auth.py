@@ -1,16 +1,26 @@
 """
 Authentication routes — login, session management, user profile.
+
+Mock auth: users log in with employee_id (e.g., "EMP001").
+The sso_token field accepts employee_id directly in dev mode.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from typing import Optional
+from services.enforcer.auth_service import (
+    validate_sso_token,
+    get_user_profile,
+    generate_session_token,
+    revoke_session,
+    get_deployment_mode,
+)
 
 router = APIRouter()
 
 
 class LoginRequest(BaseModel):
-    """SSO login request."""
+    """SSO login request. In dev mode, pass employee_id as sso_token."""
     sso_token: str
 
 
@@ -39,35 +49,46 @@ class UserProfileResponse(BaseModel):
 @router.post("/login", response_model=LoginResponse)
 async def login(request: LoginRequest):
     """Validate SSO token and create internal session."""
-    # TODO: enforcer.auth_service.validateSSOToken + generateSessionToken
+    # In dev mode, sso_token is the employee_id directly
+    validation = validate_sso_token(request.sso_token)
+    employee_id = validation["employee_id"]
+
+    # Get full user profile
+    profile = get_user_profile(employee_id)
+
+    # Generate session token
+    session_token = generate_session_token(employee_id)
+
     return LoginResponse(
-        session_token="placeholder_session_token",
-        user_id="EMP001",
-        name="Dev User",
-        role="analyst",
-        department="Marketing",
-        deployment_mode="SHADOW",
+        session_token=session_token,
+        user_id=profile.employee_id,
+        name=profile.name,
+        role=profile.role,
+        department=profile.department,
+        deployment_mode=get_deployment_mode(),
     )
 
 
 @router.get("/profile/{employee_id}", response_model=UserProfileResponse)
 async def get_profile(employee_id: str):
     """Get employee profile from directory."""
-    # TODO: enforcer.auth_service.getUserProfile
+    profile = get_user_profile(employee_id)
     return UserProfileResponse(
-        employee_id=employee_id,
-        name="Dev User",
-        email="dev@coca-cola.com",
-        role="analyst",
-        department="Marketing",
-        department_id="DEPT_MKT",
-        clearance_level="standard",
-        manager_id="MGR001",
+        employee_id=profile.employee_id,
+        name=profile.name,
+        email=profile.email,
+        role=profile.role,
+        department=profile.department,
+        department_id=profile.department_id,
+        clearance_level=profile.clearance_level,
+        manager_id=profile.manager_id,
     )
 
 
 @router.post("/logout")
-async def logout():
+async def logout(request: Request):
     """Revoke current session."""
-    # TODO: enforcer.auth_service.revokeSession
+    token = getattr(request.state, "token", None)
+    if token:
+        revoke_session(token)
     return {"message": "Session revoked"}
