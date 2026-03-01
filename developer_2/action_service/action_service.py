@@ -3,6 +3,11 @@ Action Execution Service
 Developer 2 - The Enforcer
 Executes what Developer 1's risk engine decides.
 """
+# Import settings validation
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+from settings_service.settings_service import validate_prompt
 import uuid
 from datetime import datetime
 
@@ -41,21 +46,37 @@ def block_prompt(user_id: str, raw_prompt: str, reason: str, policy_version: str
     }
 
 
-def forward_to_gpt(sanitized_prompt: str, user_id: str) -> dict:
+def forward_to_gpt(sanitized_prompt: str, user_id: str, user_profile: dict = None) -> dict:
     """Send approved/rewritten prompt to CokeGPT via internal API."""
-    # MOCK — in production this hits COKEGPT_ENDPOINT with COKEGPT_API_KEY
+    
+    # ── Check settings limitations first ──
+    if user_profile:
+        settings_check = validate_prompt(user_profile, sanitized_prompt)
+        if not settings_check["passed"]:
+            _log_action("SETTINGS_BLOCK", {
+                "user_id": user_id,
+                "violations": settings_check["violations"],
+                "violation_count": settings_check["violation_count"]
+            })
+            return {
+                "success": False,
+                "blocked_by": "settings_service",
+                "violations": settings_check["violations"],
+                "warnings": settings_check["warnings"],
+                "message": "Prompt blocked by limitation settings. See violations for details."
+            }
+    
+    # ── Original logic: forward to CokeGPT ──
     _log_action("FORWARD", {
         "user_id": user_id,
         "prompt_length": len(sanitized_prompt)
     })
-    # Simulated response
     mock_response = f"[MOCK CokeGPT Response] Processed prompt ({len(sanitized_prompt)} chars) for user {user_id}."
     return {
         "success": True,
         "response_content": mock_response,
         "model": "cokegpt-internal-v2"
     }
-
 
 def receive_gpt_response(response_content: str) -> dict:
     """Capture CokeGPT's raw output."""
@@ -134,6 +155,18 @@ def get_shadow_log() -> list[dict]:
     """Retrieve all shadow mode records."""
     return _shadow_log.copy()
 
+def get_user_limitations(employee_id: str) -> dict:
+    """Get all active limitations for a user (for frontend display)."""
+    try:
+        import sys, os
+        sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+        from settings_service.settings_service import get_settings_summary
+        profile = get_user_profile(employee_id)
+        if profile:
+            return get_settings_summary(profile)
+        return {"error": "User not found"}
+    except ImportError:
+        return {"error": "Settings service not available"}
 
 if __name__ == "__main__":
     # Smoke tests

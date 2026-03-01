@@ -1,0 +1,55 @@
+{
+  "company": {
+    "blocked_topics": [
+      "competitor analysis",
+      "legal advice",
+      "hr complaints",
+      "salaries",
+      "internal code names",
+      "employee termination",
+      "lawsuit",
+      "union organizing"
+    ],
+    "blocked_data_types": ["email", "phone", "ssn", "credit_card", "api_key"],
+    "block_profanity": true,
+    "profanity_list": ["damn", "hell", "ass", "crap", "wtf", "stfu", "lmao", "bruh", "af", "bs", "smh"],
+    "work_hours_only": true,
+    "work_hours_start": 8,
+    "work_hours_end": 18,
+    "max_prompt_length": 2000,
+    "block_large_paste": true,
+    "paste_threshold": 500,
+    "override_priority": "company_overrides_department"
+  },
+  "departments": {},
+  "roles": {
+    "analyst": {
+      "approved_use_cases": ["summarize", "draft email", "market research", "data analysis", "create report"],
+      "restrict_to_approved_only": false,
+      "blocked_data_types": [],
+      "max_prompt_length": null
+    },
+    "engineer": {
+      "approved_use_cases": ["summarize", "draft email", "debug help", "code review", "documentation"],
+      "restrict_to_approved_only": false,
+      "blocked_data_types": [],
+      "max_prompt_length": null
+    },
+    "manager": {
+      "approved_use_cases": ["summarize", "draft email", "team update", "create report", "project planning", "code review"],
+      "restrict_to_approved_only": false,
+      "blocked_data_types": [],
+      "max_prompt_length": null
+    }
+  },
+  "custom_keywords": {
+    "company": [
+      "secret formula",
+      "merchandise 7x",
+      "coca-cola recipe",
+      "ingredient list",
+      "syrup ratio",
+      "vault combination"
+    ]
+  }
+}
