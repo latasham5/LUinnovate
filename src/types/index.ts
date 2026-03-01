@@ -40,55 +40,69 @@ export interface ChatMessage {
 
 /* ── Backend-aligned enums ─────────────────────────────────────── */
 
-export enum RiskCategory {
-  PII = "pii",
-  CREDENTIALS = "credentials",
-  FINANCIAL = "financial",
-  HEALTH = "health",
-  INTERNAL = "internal",
-  BIAS = "bias",
-  LEGAL = "legal",
-}
+export const RiskCategory = {
+  PII: "pii",
+  CREDENTIALS: "credentials",
+  FINANCIAL: "financial",
+  HEALTH: "health",
+  INTERNAL: "internal",
+  BIAS: "bias",
+  LEGAL: "legal",
+} as const;
 
-export enum SeverityColor {
-  GREEN = "green",
-  YELLOW = "yellow",
-  ORANGE = "orange",
-  RED = "red",
-}
+export type RiskCategory = typeof RiskCategory[keyof typeof RiskCategory];
 
-export enum ActionType {
-  ALLOWED = "allowed",
-  WARNING = "warning",
-  REWRITTEN = "rewritten",
-  BLOCKED = "blocked",
-}
+export const SeverityColor = {
+  GREEN: "green",
+  YELLOW: "yellow",
+  ORANGE: "orange",
+  RED: "red",
+} as const;
 
-export enum PolicyMode {
-  STRICT = "strict",
-  BALANCED = "balanced",
-  PERMISSIVE = "permissive",
-}
+export type SeverityColor = typeof SeverityColor[keyof typeof SeverityColor];
 
-export enum DeploymentMode {
-  SHADOW = "shadow",
-  FULL = "full",
-}
+export const ActionType = {
+  ALLOWED: "allowed",
+  WARNING: "warning",
+  REWRITTEN: "rewritten",
+  BLOCKED: "blocked",
+} as const;
 
-export enum ConfidenceLevel {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  CRITICAL = "critical",
-}
+export type ActionType = typeof ActionType[keyof typeof ActionType];
 
-export enum IntentType {
-  DATA_EXTRACTION = "data_extraction",
-  CODE_GENERATION = "code_generation",
-  SUMMARIZATION = "summarization",
-  ANALYSIS = "analysis",
-  GENERAL = "general",
-}
+export const PolicyMode = {
+  STRICT: "strict",
+  BALANCED: "balanced",
+  PERMISSIVE: "permissive",
+} as const;
+
+export type PolicyMode = typeof PolicyMode[keyof typeof PolicyMode];
+
+export const DeploymentMode = {
+  SHADOW: "shadow",
+  FULL: "full",
+} as const;
+
+export type DeploymentMode = typeof DeploymentMode[keyof typeof DeploymentMode];
+
+export const ConfidenceLevel = {
+  LOW: "low",
+  MEDIUM: "medium",
+  HIGH: "high",
+  CRITICAL: "critical",
+} as const;
+
+export type ConfidenceLevel = typeof ConfidenceLevel[keyof typeof ConfidenceLevel];
+
+export const IntentType = {
+  DATA_EXTRACTION: "data_extraction",
+  CODE_GENERATION: "code_generation",
+  SUMMARIZATION: "summarization",
+  ANALYSIS: "analysis",
+  GENERAL: "general",
+} as const;
+
+export type IntentType = typeof IntentType[keyof typeof IntentType];
 
 /* ── Auth types ────────────────────────────────────────────────── */
 
