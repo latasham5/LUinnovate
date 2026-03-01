@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/*
+ * Coca-Cola Brand Theme
+ * Primary Red: #ea0000
+ * Dark Red (hover): #c50000
+ * Black: #000000
+ * Grays: #353535, #4f4f4f, #6c6c6c, #d5d5d5, #eeeeee
+ * Positive: #1d6e17
+ * Warning: #725d27
+ */
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar — dark themed */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d5d5d5;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6c6c6c;
+}
