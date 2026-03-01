@@ -33,7 +33,7 @@ const SCENARIOS: Scenario[] = [
     ],
     correctAnswer: "b",
     explanation:
-      "Always replace personally identifiable information (PII) such as SSNs with placeholders before sending to any AI tool. PromptGuard does this automatically, but it's important to understand the principle. Even internal AI tools may log prompts or use them for training.",
+      "Always replace personally identifiable information (PII) such as SSNs with placeholders before sending to any AI tool. S.I.P does this automatically, but it's important to understand the principle. Even internal AI tools may log prompts or use them for training.",
   },
   {
     id: 2,
@@ -55,20 +55,20 @@ const SCENARIOS: Scenario[] = [
     ],
     correctAnswer: "b",
     explanation:
-      "API keys and tokens must never be shared in AI prompts, even in development environments. Replace credentials with placeholders and describe the problem without exposing secrets. PromptGuard detects credentials automatically, but developing this habit ensures safety across all tools.",
+      "API keys and tokens must never be shared in AI prompts, even in development environments. Replace credentials with placeholders and describe the problem without exposing secrets. S.I.P detects credentials automatically, but developing this habit ensures safety across all tools.",
   },
   {
     id: 3,
     question:
-      'You\'re drafting an email with the AI tool and PromptGuard flags your message as containing "Internal" content. What should you do?',
+      'You\'re drafting an email with the AI tool and S.I.P flags your message as containing "Internal" content. What should you do?',
     options: [
       {
         value: "a",
-        label: "Override PromptGuard and send anyway",
+        label: "Override S.I.P and send anyway",
       },
       {
         value: "b",
-        label: "Review the safer rewrite suggested by PromptGuard and use it if appropriate",
+        label: "Review the safer rewrite suggested by S.I.P and use it if appropriate",
       },
       {
         value: "c",
@@ -77,7 +77,7 @@ const SCENARIOS: Scenario[] = [
     ],
     correctAnswer: "b",
     explanation:
-      "When PromptGuard flags content, review the suggested safer rewrite. It typically replaces internal or confidential references with safe placeholders while keeping the intent of your message. You can edit the rewrite if needed. Completely avoiding AI tools isn't necessary — just use them safely.",
+      "When S.I.P flags content, review the suggested safer rewrite. It typically replaces internal or confidential references with safe placeholders while keeping the intent of your message. You can edit the rewrite if needed. Completely avoiding AI tools isn't necessary — just use them safely.",
   },
 ];
 

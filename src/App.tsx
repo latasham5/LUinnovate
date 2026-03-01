@@ -21,6 +21,8 @@ import {
   Plus,
   ChevronDown,
   Trash2,
+  Accessibility,
+  Type,
 } from "lucide-react";
 import { AppProvider, useApp } from "./state/AppContext.tsx";
 import PolicySelector from "./components/PolicySelector.jsx";
@@ -81,10 +83,11 @@ function formatRelativeTime(timestamp: number): string {
 }
 
 function AppShell() {
-  const { settings, toggleDarkMode, user, logout, chatHistory, startNewChat, loadChat, deleteChat } = useApp();
+  const { settings, toggleDarkMode, setTextSize, toggleHighContrast, user, logout, chatHistory, startNewChat, loadChat, deleteChat } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
   const [mode, setMode] = useState("balanced");
+  const [a11yOpen, setA11yOpen] = useState(false);
 
   const initials = user
     ? user.name
@@ -269,7 +272,7 @@ function AppShell() {
           </button>
 
           <span className="text-sm font-semibold text-black hidden sm:block">
-            PromptGuard Agent
+            S.I.P Agent
           </span>
 
           <div className="ml-auto flex items-center gap-3">
@@ -287,6 +290,68 @@ function AppShell() {
                 <Moon className="w-4 h-4 text-neutral-500" />
               )}
             </button>
+
+            {/* Accessibility dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setA11yOpen(!a11yOpen)}
+                className="flex items-center justify-center w-8 h-8 rounded-full border border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
+                aria-label="Accessibility settings"
+                aria-haspopup="true"
+                aria-expanded={a11yOpen}
+              >
+                <Accessibility className="w-4 h-4 text-neutral-500" />
+              </button>
+              {a11yOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setA11yOpen(false)} />
+                  <div className="absolute right-0 top-full mt-1 bg-white border border-neutral-200 rounded-xl shadow-lg p-4 z-50 min-w-[200px]">
+                    <div className="mb-3">
+                      <label className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <Type className="w-3.5 h-3.5" aria-hidden="true" />
+                        Text Size
+                      </label>
+                      <div className="flex gap-1 mt-1">
+                        {(["sm", "md", "lg"] as const).map((size) => (
+                          <button
+                            key={size}
+                            onClick={() => setTextSize(size)}
+                            className={`flex-1 py-1.5 text-sm rounded-lg border transition-colors cursor-pointer ${
+                              settings.textSize === size
+                                ? "border-[#ea0000] bg-[#ea0000]/5 text-[#ea0000] font-semibold"
+                                : "border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                            }`}
+                            aria-pressed={settings.textSize === size}
+                          >
+                            {size.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <button
+                        onClick={toggleHighContrast}
+                        className="w-full flex items-center justify-between py-2 text-sm cursor-pointer"
+                        aria-pressed={settings.highContrast}
+                      >
+                        <span className="text-neutral-700">High contrast</span>
+                        <span
+                          className={`w-9 h-5 rounded-full relative transition-colors ${
+                            settings.highContrast ? "bg-[#ea0000]" : "bg-neutral-300"
+                          }`}
+                        >
+                          <span
+                            className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
+                              settings.highContrast ? "translate-x-4" : "translate-x-0.5"
+                            }`}
+                          />
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
             <PolicySelector mode={mode} onModeChange={setMode} />
 

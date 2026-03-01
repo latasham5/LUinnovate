@@ -72,7 +72,7 @@ export default function Header() {
           <div className="flex items-center gap-1.5">
             <Shield className="w-4 h-4 text-brand-red" aria-hidden="true" />
             <span className="font-semibold text-gray-900 text-sm">
-              PromptGuard
+              S.I.P
             </span>
           </div>
         </div>

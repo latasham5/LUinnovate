@@ -25,13 +25,13 @@ export default function AgentPanel() {
   return (
     <aside
       className="w-80 border-l border-gray-200 bg-gray-50 flex flex-col overflow-y-auto flex-shrink-0"
-      aria-label="PromptGuard Agent panel"
+      aria-label="S.I.P Agent panel"
     >
       <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center gap-2 mb-3">
           <Shield className="w-4 h-4 text-brand-red" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-gray-900">
-            PromptGuard Agent
+            S.I.P Agent
           </h2>
         </div>
         <div className="flex items-center gap-2 flex-wrap">

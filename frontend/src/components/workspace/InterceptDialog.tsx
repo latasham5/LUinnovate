@@ -76,7 +76,7 @@ export default function InterceptDialog({
                   id="intercept-title"
                   className="text-base font-semibold text-gray-900"
                 >
-                  PromptGuard stopped this message
+                  S.I.P stopped this message
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Sensitive data was detected in your prompt

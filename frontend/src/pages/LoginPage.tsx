@@ -57,7 +57,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-3">
             <Shield className="w-8 h-8 text-brand-red" />
-            <span className="text-2xl font-bold text-gray-900">PromptGuard</span>
+            <span className="text-2xl font-bold text-gray-900">S.I.P</span>
           </div>
           <p className="text-sm text-gray-500">
             Coca-Cola AI Security Middleware

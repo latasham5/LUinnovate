@@ -67,7 +67,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       id: "msg-welcome",
       role: "assistant",
       content:
-        "Hello! I'm CokeGPT, your AI assistant. PromptGuard is actively monitoring this conversation to protect sensitive data. Feel free to ask me anything.",
+        "Hello! I'm CokeGPT, your AI assistant. S.I.P is actively monitoring this conversation to protect sensitive data. Feel free to ask me anything.",
       timestamp: Date.now(),
     },
   ]);

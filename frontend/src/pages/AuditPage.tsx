@@ -37,7 +37,7 @@ export default function AuditPage() {
             <h1 className="text-xl font-bold text-gray-900">Audit Log</h1>
             <p className="text-sm text-gray-500 mt-0.5">
               Review flagged prompts, policy violations, and actions taken by
-              PromptGuard.
+              S.I.P.
             </p>
           </div>
           <button

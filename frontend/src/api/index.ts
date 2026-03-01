@@ -122,7 +122,7 @@ export async function getAuditEvents(): Promise<AuditEvent[]> {
         : e.action_taken === "REWRITTEN" ? "rewritten" : "allowed",
       policyVersion: e.policy_mode || "v1.0",
       redactedSnippet: e.rewritten_prompt || e.raw_prompt?.slice(0, 80) || "---",
-      reason: e.explanation || `${e.action_taken} by PromptGuard`,
+      reason: e.explanation || `${e.action_taken} by S.I.P`,
     }));
   } catch {
     return [];

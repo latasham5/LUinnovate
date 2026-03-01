@@ -97,7 +97,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     id: "msg-1",
     role: "assistant",
     content:
-      "Hello! I'm your AI assistant. PromptGuard is actively monitoring this conversation to protect sensitive data. Feel free to ask me anything.",
+      "Hello! I'm your AI assistant. S.I.P is actively monitoring this conversation to protect sensitive data. Feel free to ask me anything.",
     timestamp: Date.now() - 60000,
   },
   {

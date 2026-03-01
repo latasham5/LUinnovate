@@ -77,7 +77,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
       const systemMsg: ChatMessage = {
         id: generateId(),
         role: "system",
-        content: "PromptGuard verified — no sensitive data detected",
+        content: "S.I.P verified — no sensitive data detected",
         timestamp: Date.now(),
       };
       addMessage(systemMsg);
@@ -137,7 +137,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
         const systemMsg: ChatMessage = {
           id: generateId(),
           role: "system",
-          content: "PromptGuard rewrote this message to remove sensitive data",
+          content: "S.I.P rewrote this message to remove sensitive data",
           timestamp: Date.now(),
         };
         addMessage(systemMsg);
@@ -182,7 +182,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
               aria-describedby="composer-help"
             />
             <p id="composer-help" className="text-xs text-gray-400 mt-1 px-1">
-              PromptGuard checks for sensitive data before sending.
+              S.I.P checks for sensitive data before sending.
             </p>
           </div>
           <button

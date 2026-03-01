@@ -50,7 +50,7 @@ export default function ChatArea() {
               {msg.wasRewritten && (
                 <div className="flex items-center gap-1 mb-1.5 text-xs text-emerald-600 font-medium">
                   <Shield className="w-3 h-3" aria-hidden="true" />
-                  Rewritten by PromptGuard
+                  Rewritten by S.I.P
                 </div>
               )}
               {msg.content}

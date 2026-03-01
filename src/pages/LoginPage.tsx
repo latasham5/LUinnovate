@@ -67,7 +67,7 @@ export default function LoginPage() {
           className="h-5 invert"
         />
         <p className="text-white/80 text-sm font-medium tracking-wide">
-          Initializing PromptGuard...
+          Initializing S.I.P...
         </p>
         <Loader2 className="w-5 h-5 text-[#ea0000] animate-spin" />
       </div>
@@ -87,7 +87,7 @@ export default function LoginPage() {
             alt="The Coca-Cola Company"
             className="h-5 mx-auto mb-3"
           />
-          <h1 className="text-2xl font-bold text-gray-900">PromptGuard Agent</h1>
+          <h1 className="text-2xl font-bold text-gray-900">S.I.P Agent</h1>
           <p className="text-sm text-gray-500 mt-1">AI Safety Layer — Sign in to continue</p>
         </div>
 

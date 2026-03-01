@@ -150,7 +150,7 @@ export async function submitPrompt(
   await delay(800 + Math.random() * 400);
 
   return {
-    response: `I've processed your request. Here's a summary based on your prompt: "${prompt.slice(0, 60)}${prompt.length > 60 ? "..." : ""}" — This is a simulated AI assistant response demonstrating how the integrated AI tool would respond after PromptGuard verification.`,
+    response: `I've processed your request. Here's a summary based on your prompt: "${prompt.slice(0, 60)}${prompt.length > 60 ? "..." : ""}" — This is a simulated AI assistant response demonstrating how the integrated AI tool would respond after S.I.P verification.`,
   };
 }
 
