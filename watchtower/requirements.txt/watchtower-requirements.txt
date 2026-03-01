@@ -9,8 +9,8 @@ python-dotenv>=1.0.0
 # ── .env.example ─────────────────────────────────────────────────────────
 # Copy to .env and fill in real values
 #
-# SUPABASE_URL=https://your-project.supabase.co
-# SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+# SUPABASE_URL=https://elqcrzhbgmotxvpctrtm.supabase.co/
+# SUPABASE_SERVICE_ROLE_KEY=sb_publishable_g6zu-peoowD91UVMuXbQUA_oalNZKwZ
 # SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T.../B.../xxx
 # TEAMS_WEBHOOK_URL=https://outlook.office.com/webhook/...
 # DEFAULT_RETENTION_DAYS=365
