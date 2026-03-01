@@ -163,3 +163,39 @@ def get_access_audit_log(manager_id: str | None = None) -> list[dict]:
 def get_fields_for_role(role: str) -> list[str]:
     """Return the list of incident fields visible to a given role."""
     return _role_access_rules.get(role, _role_access_rules["manager"])
+
+
+def get_supervisor_permissions() -> dict:
+    """
+    Returns what supervisors can and cannot do.
+    Used by the frontend to show/hide/lock settings.
+    """
+    return {
+        "allowed": [
+            "view_team_scorecard",
+            "view_employee_flag_summary",
+            "view_team_trends",
+            "view_top_risk_users",
+            "view_alert_notifications",
+            "export_team_summary_report",
+            "view_training_status",
+            "send_training_reminder",
+            "request_incident_detail",
+            "update_own_notification_preferences",
+        ],
+        "denied": [
+            "change_policy_mode",
+            "update_policy_rules",
+            "set_deployment_mode",
+            "update_shadow_mode_config",
+            "modify_escalation_rules",
+            "modify_training_thresholds",
+            "access_raw_prompt_text",
+            "access_other_departments",
+            "export_full_audit_logs",
+            "view_cybersecurity_dashboard",
+            "modify_user_permissions",
+            "reset_employee_flag_count",
+            "disable_compliance_monitoring",
+        ],
+    }
