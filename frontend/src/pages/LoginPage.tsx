@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Loader2 } from "lucide-react";
 import { login } from "../api/index.ts";
+import { useApp } from "../state/AppContext.tsx";
 
 const MOCK_EMPLOYEES = [
   { id: "EMP001", name: "Sarah Johnson", role: "analyst", dept: "Marketing" },
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useApp();
 
   const handleLogin = async () => {
     if (!selectedId) return;
@@ -29,16 +31,17 @@ export default function LoginPage() {
     try {
       const data = await login(selectedId);
       sessionStorage.setItem("session_token", data.session_token);
-      sessionStorage.setItem(
-        "user",
-        JSON.stringify({
-          user_id: data.user_id,
-          name: data.name,
-          role: data.role,
-          department: data.department,
-          deployment_mode: data.deployment_mode,
-        })
-      );
+      const userData = {
+        user_id: data.user_id,
+        name: data.name,
+        role: data.role,
+        department: data.department,
+        session_token: data.session_token,
+        deployment_mode: data.deployment_mode,
+      };
+      sessionStorage.setItem("user", JSON.stringify(userData));
+      // Update React context so ProtectedRoute sees the user immediately
+      setUser(userData);
       navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.detail || "Login failed. Is the backend running on port 8000?");
