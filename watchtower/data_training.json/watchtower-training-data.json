@@ -1,0 +1,100 @@
+{
+  "pii_awareness": {
+    "title": "Handling Personally Identifiable Information (PII)",
+    "categories": ["pii", "personal_data", "ssn", "email"],
+    "description": "Learn how to recognize and avoid sharing PII in AI prompts.",
+    "questions": [
+      {
+        "question_id": "pii_q1",
+        "text": "Which of the following should NEVER be included in an AI prompt?",
+        "options": [
+          "A) A customer's full Social Security Number",
+          "B) A generic product description",
+          "C) A company's public mission statement",
+          "D) An anonymized data trend"
+        ],
+        "correct_answer": "A"
+      },
+      {
+        "question_id": "pii_q2",
+        "text": "What should you do before pasting customer data into an AI tool?",
+        "options": [
+          "A) Nothing — AI tools are always secure",
+          "B) Remove or redact all identifying information",
+          "C) Ask the customer for permission in the prompt",
+          "D) Use a VPN"
+        ],
+        "correct_answer": "B"
+      },
+      {
+        "question_id": "pii_q3",
+        "text": "A colleague asks you to summarize a client file using AI. The file has names and phone numbers. What do you do?",
+        "options": [
+          "A) Paste it in — AI won't store it",
+          "B) Redact names and numbers first, then summarize",
+          "C) Only paste the phone numbers",
+          "D) Ask the AI to delete the data after"
+        ],
+        "correct_answer": "B"
+      }
+    ]
+  },
+  "ip_protection": {
+    "title": "Protecting Intellectual Property & Trade Secrets",
+    "categories": ["intellectual_property", "trade_secret", "source_code", "proprietary"],
+    "description": "Understand the risks of sharing proprietary information with AI tools.",
+    "questions": [
+      {
+        "question_id": "ip_q1",
+        "text": "Which of these is considered a trade secret?",
+        "options": [
+          "A) A press release published on your website",
+          "B) An internal pricing algorithm not shared publicly",
+          "C) Your company's public stock price",
+          "D) An open-source library your team uses"
+        ],
+        "correct_answer": "B"
+      },
+      {
+        "question_id": "ip_q2",
+        "text": "You want AI to review your team's proprietary source code. What's the safest approach?",
+        "options": [
+          "A) Paste the full codebase for best results",
+          "B) Use only non-proprietary snippets or pseudocode",
+          "C) It's fine if you delete the chat after",
+          "D) Use a personal account instead of work"
+        ],
+        "correct_answer": "B"
+      }
+    ]
+  },
+  "general_awareness": {
+    "title": "General AI Safety Awareness",
+    "categories": [],
+    "description": "Foundational module covering safe and responsible use of AI tools at work.",
+    "questions": [
+      {
+        "question_id": "gen_q1",
+        "text": "What is the primary risk of entering sensitive data into an AI chatbot?",
+        "options": [
+          "A) The AI might give a wrong answer",
+          "B) The data could be stored, leaked, or used for training",
+          "C) The AI will send it to your manager",
+          "D) There is no risk"
+        ],
+        "correct_answer": "B"
+      },
+      {
+        "question_id": "gen_q2",
+        "text": "Your company has an AI usage policy. When should you review it?",
+        "options": [
+          "A) Only during onboarding",
+          "B) Whenever it's updated and before using a new AI tool",
+          "C) Never — policies are just guidelines",
+          "D) Only if you get flagged"
+        ],
+        "correct_answer": "B"
+      }
+    ]
+  }
+}
