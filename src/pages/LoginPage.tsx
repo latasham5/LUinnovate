@@ -3,18 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { Shield, Loader2 } from "lucide-react";
 import { useApp } from "../state/AppContext.tsx";
 
-// Demo SSO tokens from the backend handoff document
+// Actual employee IDs from the backend's mock_users/users.json
 const DEMO_USERS = [
-  { name: "Sarah Chen", role: "Admin", token: "sso-sarah-chen-001" },
-  { name: "James Wilson", role: "Supervisor", token: "sso-james-wilson-002" },
-  { name: "Maria Garcia", role: "Employee", token: "sso-maria-garcia-003" },
-  { name: "David Kim", role: "Employee", token: "sso-david-kim-004" },
-  { name: "Emily Johnson", role: "Supervisor", token: "sso-emily-johnson-005" },
-  { name: "Robert Taylor", role: "Employee", token: "sso-robert-taylor-006" },
-  { name: "Lisa Anderson", role: "Employee", token: "sso-lisa-anderson-007" },
-  { name: "Michael Brown", role: "Employee", token: "sso-michael-brown-008" },
-  { name: "Jennifer Davis", role: "Employee", token: "sso-jennifer-davis-009" },
+  { name: "Sarah Johnson", role: "Analyst", dept: "Marketing", token: "EMP001" },
+  { name: "Michael Chen", role: "Analyst", dept: "Finance", token: "EMP002" },
+  { name: "Jessica Williams", role: "Senior Analyst", dept: "Supply Chain", token: "EMP003" },
+  { name: "David Martinez", role: "Manager", dept: "Marketing", token: "MGR001" },
+  { name: "Emily Davis", role: "Manager", dept: "Finance", token: "MGR002" },
+  { name: "Robert Taylor", role: "Manager", dept: "Supply Chain", token: "MGR003" },
+  { name: "Amanda Wilson", role: "Director", dept: "Operations", token: "DIR001" },
+  { name: "James Anderson", role: "Security Admin", dept: "Cybersecurity", token: "SEC001" },
+  { name: "System Administrator", role: "Admin", dept: "IT", token: "ADM001" },
 ];
+
+const ROLE_STYLES: Record<string, string> = {
+  Admin: "bg-red-50 text-red-700",
+  "Security Admin": "bg-red-50 text-red-700",
+  Director: "bg-purple-50 text-purple-700",
+  Manager: "bg-amber-50 text-amber-700",
+  "Senior Analyst": "bg-blue-50 text-blue-700",
+  Analyst: "bg-gray-100 text-gray-600",
+};
 
 export default function LoginPage() {
   const { login, authLoading } = useApp();
@@ -30,7 +39,7 @@ export default function LoginPage() {
       await login(ssoToken.trim());
       navigate("/");
     } catch {
-      setError("Invalid SSO token. Please try again or select a demo user.");
+      setError("Invalid employee ID. Try one of the demo users below.");
     }
   }
 
@@ -67,14 +76,14 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="sso-token" className="block text-sm font-medium text-gray-700 mb-1">
-                SSO Token
+                Employee ID
               </label>
               <input
                 id="sso-token"
                 type="text"
                 value={ssoToken}
                 onChange={(e) => setSsoToken(e.target.value)}
-                placeholder="Enter your SSO token"
+                placeholder="e.g. EMP001, MGR001, ADM001"
                 className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#ea0000]/30 focus:border-[#ea0000]"
               />
             </div>
@@ -107,7 +116,7 @@ export default function LoginPage() {
           </div>
 
           {/* Demo user quick-login buttons */}
-          <div className="space-y-2 max-h-64 overflow-y-auto">
+          <div className="space-y-2 max-h-72 overflow-y-auto">
             {DEMO_USERS.map((u) => (
               <button
                 key={u.token}
@@ -115,14 +124,11 @@ export default function LoginPage() {
                 disabled={authLoading}
                 className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-left disabled:opacity-50 cursor-pointer"
               >
-                <span className="text-sm font-medium text-gray-800">{u.name}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                  u.role === "Admin"
-                    ? "bg-red-50 text-red-700"
-                    : u.role === "Supervisor"
-                      ? "bg-amber-50 text-amber-700"
-                      : "bg-gray-100 text-gray-600"
-                }`}>
+                <div>
+                  <span className="text-sm font-medium text-gray-800">{u.name}</span>
+                  <span className="text-xs text-gray-400 ml-2">{u.dept}</span>
+                </div>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ROLE_STYLES[u.role] || "bg-gray-100 text-gray-600"}`}>
                   {u.role}
                 </span>
               </button>

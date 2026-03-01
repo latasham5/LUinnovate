@@ -3,7 +3,6 @@ import {
   useContext,
   useState,
   useCallback,
-  useEffect,
   type ReactNode,
 } from "react";
 import type {
@@ -13,7 +12,6 @@ import type {
   AnalysisResult,
   FlaggedEvent,
   UserRisk,
-  UserProfile,
 } from "../types/index.ts";
 import { PolicyMode } from "../types/index.ts";
 import {
@@ -21,7 +19,7 @@ import {
   getStoredToken,
   login as apiLogin,
   logout as apiLogout,
-  getProfile,
+  type BackendLoginResponse,
 } from "../api/authService.ts";
 
 /* ── State shape ───────────────────────────────────────────────── */
@@ -35,7 +33,7 @@ interface AppState {
   isAnalyzing: boolean;
   isSubmitting: boolean;
   // Auth
-  user: UserProfile | null;
+  user: BackendLoginResponse | null;
   token: string | null;
   isAuthenticated: boolean;
   authLoading: boolean;
@@ -109,25 +107,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /* ── Auth state ─────────────────────────────────────────────── */
-  const [user, setUser] = useState<UserProfile | null>(getStoredUser());
+  const [user, setUser] = useState<BackendLoginResponse | null>(getStoredUser());
   const [token, setToken] = useState<string | null>(getStoredToken());
   const [authLoading, setAuthLoading] = useState(false);
-
-  // Hydrate user profile on mount if we have a token
-  useEffect(() => {
-    if (token && !user) {
-      setAuthLoading(true);
-      getProfile()
-        .then(setUser)
-        .catch(() => {
-          // Token is stale — clear it
-          apiLogout();
-          setToken(null);
-          setUser(null);
-        })
-        .finally(() => setAuthLoading(false));
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ── Settings callbacks ─────────────────────────────────────── */
   const setPolicyMode = useCallback((mode: PolicyMode) => {
@@ -160,8 +142,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setAuthLoading(true);
     try {
       const response = await apiLogin(ssoToken);
-      setToken(response.access_token);
-      setUser(response.user);
+      setToken(response.session_token);
+      setUser(response);
     } finally {
       setAuthLoading(false);
     }

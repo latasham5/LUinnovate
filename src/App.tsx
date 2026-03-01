@@ -11,7 +11,6 @@ import {
   BarChart3,
   Users,
   Sparkles,
-  GraduationCap,
   Menu,
   X,
   Sun,
@@ -34,16 +33,17 @@ import LogsDashboard from "./pages/LogsDashboard.jsx";
 // @ts-ignore
 import SupervisorDashboard from "./pages/SupervisorDashboard.jsx";
 
+const ELEVATED_ROLES = ["manager", "director", "security_admin", "admin"];
+
 const NAV_ITEMS = [
   { to: "/", label: "Workspace", icon: MessageSquare, end: true },
   { to: "/prompt", label: "Prompt Analyzer", icon: Sparkles, end: false },
-  { to: "/audit", label: "Audit", icon: BarChart3, end: false },
-  { to: "/logs", label: "Risk Log", icon: BarChart3, end: false },
-  { to: "/training", label: "Training", icon: GraduationCap, end: false },
-  { to: "/supervisor", label: "Supervisor", icon: Users, end: false },
+  { to: "/audit", label: "Audit", icon: BarChart3, end: false, requiredRoles: ELEVATED_ROLES },
+  { to: "/logs", label: "Risk Log", icon: BarChart3, end: false, requiredRoles: ELEVATED_ROLES },
+  { to: "/supervisor", label: "Supervisor", icon: Users, end: false, requiredRoles: ELEVATED_ROLES },
 ];
 
-/* ── Route guard ───────────────────────────────────────────────── */
+/* ── Route guards ──────────────────────────────────────────────── */
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, authLoading } = useApp();
   if (authLoading) {
@@ -54,6 +54,14 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     );
   }
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+}
+
+function RequireRole({ roles, children }: { roles: string[]; children: React.ReactNode }) {
+  const { user } = useApp();
+  if (!user || !roles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
 }
 
 /* ── App shell (sidebar + top bar + pages) ─────────────────────── */
@@ -120,7 +128,9 @@ function AppShell() {
 
         {/* Nav links */}
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
+          {NAV_ITEMS.filter(
+            (item) => !item.requiredRoles || (user && item.requiredRoles.includes(user.role))
+          ).map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -219,22 +229,26 @@ function AppShell() {
                 </div>
               }
             />
-            <Route path="/audit" element={<AuditPage />} />
+            <Route path="/audit" element={<RequireRole roles={ELEVATED_ROLES}><AuditPage /></RequireRole>} />
             <Route
               path="/logs"
               element={
-                <div className="p-5 lg:p-8 max-w-6xl w-full mx-auto">
-                  <LogsDashboard />
-                </div>
+                <RequireRole roles={ELEVATED_ROLES}>
+                  <div className="p-5 lg:p-8 max-w-6xl w-full mx-auto">
+                    <LogsDashboard />
+                  </div>
+                </RequireRole>
               }
             />
             <Route path="/training" element={<TrainingPage />} />
             <Route
               path="/supervisor"
               element={
-                <div className="p-5 lg:p-8 max-w-6xl w-full mx-auto">
-                  <SupervisorDashboard />
-                </div>
+                <RequireRole roles={ELEVATED_ROLES}>
+                  <div className="p-5 lg:p-8 max-w-6xl w-full mx-auto">
+                    <SupervisorDashboard />
+                  </div>
+                </RequireRole>
               }
             />
           </Routes>

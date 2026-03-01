@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CheckCircle, AlertTriangle } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { CheckCircle, AlertTriangle, Mail } from "lucide-react";
 import { useApp } from "../state/AppContext.tsx";
 import { completeTraining } from "../api/index.ts";
 
@@ -82,6 +83,8 @@ const SCENARIOS: Scenario[] = [
 
 export default function TrainingPage() {
   const { setUserRisk, userRisk } = useApp();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [completed, setCompleted] = useState(userRisk.trainingCompleted);
@@ -102,6 +105,22 @@ export default function TrainingPage() {
       setCompleted(true);
     }
   };
+
+  if (!token) {
+    return (
+      <main className="flex-1 overflow-y-auto p-6" id="main-content">
+        <div className="max-w-md mx-auto mt-20 text-center">
+          <Mail className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
+          <h1 className="text-lg font-bold text-gray-900 mb-2">
+            Training Access Required
+          </h1>
+          <p className="text-sm text-gray-500">
+            Check your email for the training invitation link to access this module.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex-1 overflow-y-auto p-6" id="main-content">

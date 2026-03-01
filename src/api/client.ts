@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "/api/v1";
+const API_BASE_URL = "http://localhost:8000/api/v1";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -8,7 +8,7 @@ const apiClient = axios.create({
   timeout: 15000,
 });
 
-// Attach Bearer token to every request if available
+// Attach session token to every request if available
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("pg_token");
   if (token) {
@@ -24,7 +24,6 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem("pg_token");
       localStorage.removeItem("pg_user");
-      // Redirect to login if not already there
       if (!window.location.pathname.includes("/login")) {
         window.location.href = "/login";
       }

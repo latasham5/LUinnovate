@@ -51,3 +51,16 @@ async def require_admin(current_user: dict = Depends(get_current_user)):
             detail="Admin access required",
         )
     return current_user
+
+
+ELEVATED_ROLES = ("manager", "director", "security_admin", "admin")
+
+
+async def require_elevated(current_user: dict = Depends(get_current_user)):
+    """Verify the current user has an elevated role (manager+)."""
+    if current_user.get("role") not in ELEVATED_ROLES:
+        raise HTTPException(
+            status_code=403,
+            detail="Elevated access required",
+        )
+    return current_user
