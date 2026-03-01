@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Send, Loader2 } from "lucide-react";
 import { useApp } from "../../state/AppContext.tsx";
 import {
-  analyzePrompt,
+  analyzePromptMock as analyzePrompt,
   submitPrompt,
   addAuditEvent,
   incrementRewrittenCount,

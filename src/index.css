@@ -215,3 +215,21 @@ body {
 
 /* Logo — invert for dark mode */
 .dark { --logo-filter: invert(1); }
+
+/* Dark mode — Jaylen's neutral-* and bg-black components */
+.dark .bg-neutral-50 { background-color: #1e293b !important; }
+.dark .bg-neutral-100 { background-color: #1e293b !important; }
+.dark .border-neutral-100 { border-color: #334155 !important; }
+.dark .border-neutral-200 { border-color: #334155 !important; }
+.dark .text-neutral-400 { color: #64748b !important; }
+.dark .text-neutral-500 { color: #94a3b8 !important; }
+.dark .text-neutral-600 { color: #94a3b8 !important; }
+.dark .text-neutral-700 { color: #cbd5e1 !important; }
+.dark .text-black { color: #f1f5f9 !important; }
+.dark .hover\:text-black:hover { color: #f1f5f9 !important; }
+.dark .hover\:bg-neutral-50:hover { background-color: #1e293b !important; }
+
+/* Jaylen's pages use bg-white cards — already handled above */
+/* Top bar in dark mode */
+.dark .bg-white\/90 { background-color: rgba(30, 41, 59, 0.9) !important; }
+.dark .backdrop-blur { backdrop-filter: blur(8px); }

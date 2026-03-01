@@ -3,17 +3,28 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
 import type {
   AppSettings,
-  PolicyMode,
   TextSize,
   ChatMessage,
   AnalysisResult,
   FlaggedEvent,
   UserRisk,
+  UserProfile,
 } from "../types/index.ts";
+import { PolicyMode } from "../types/index.ts";
+import {
+  getStoredUser,
+  getStoredToken,
+  login as apiLogin,
+  logout as apiLogout,
+  getProfile,
+} from "../api/authService.ts";
+
+/* ── State shape ───────────────────────────────────────────────── */
 
 interface AppState {
   settings: AppSettings;
@@ -23,6 +34,11 @@ interface AppState {
   userRisk: UserRisk;
   isAnalyzing: boolean;
   isSubmitting: boolean;
+  // Auth
+  user: UserProfile | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  authLoading: boolean;
 }
 
 interface AppContextValue extends AppState {
@@ -36,7 +52,12 @@ interface AppContextValue extends AppState {
   setUserRisk: (risk: UserRisk) => void;
   setIsAnalyzing: (v: boolean) => void;
   setIsSubmitting: (v: boolean) => void;
+  // Auth actions
+  login: (ssoToken: string) => Promise<void>;
+  logout: () => void;
 }
+
+/* ── Seed messages ─────────────────────────────────────────────── */
 
 const INITIAL_MESSAGES: ChatMessage[] = [
   {
@@ -61,15 +82,20 @@ const INITIAL_MESSAGES: ChatMessage[] = [
   },
 ];
 
+/* ── Context ───────────────────────────────────────────────────── */
+
 const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  /* ── Settings ───────────────────────────────────────────────── */
   const [settings, setSettings] = useState<AppSettings>({
-    policyMode: "balanced",
+    policyMode: PolicyMode.BALANCED,
     textSize: "md",
     highContrast: false,
     darkMode: false,
   });
+
+  /* ── Chat / analysis state ──────────────────────────────────── */
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [lastAnalysis, setLastAnalysis] = useState<AnalysisResult | null>(null);
   const [flaggedEvents, setFlaggedEvents] = useState<FlaggedEvent[]>([]);
@@ -82,6 +108,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /* ── Auth state ─────────────────────────────────────────────── */
+  const [user, setUser] = useState<UserProfile | null>(getStoredUser());
+  const [token, setToken] = useState<string | null>(getStoredToken());
+  const [authLoading, setAuthLoading] = useState(false);
+
+  // Hydrate user profile on mount if we have a token
+  useEffect(() => {
+    if (token && !user) {
+      setAuthLoading(true);
+      getProfile()
+        .then(setUser)
+        .catch(() => {
+          // Token is stale — clear it
+          apiLogout();
+          setToken(null);
+          setUser(null);
+        })
+        .finally(() => setAuthLoading(false));
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ── Settings callbacks ─────────────────────────────────────── */
   const setPolicyMode = useCallback((mode: PolicyMode) => {
     setSettings((s) => ({ ...s, policyMode: mode }));
   }, []);
@@ -98,12 +146,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSettings((s) => ({ ...s, darkMode: !s.darkMode }));
   }, []);
 
+  /* ── Chat callbacks ─────────────────────────────────────────── */
   const addMessage = useCallback((msg: ChatMessage) => {
     setMessages((prev) => [...prev, msg]);
   }, []);
 
   const addFlaggedEvent = useCallback((event: FlaggedEvent) => {
     setFlaggedEvents((prev) => [event, ...prev].slice(0, 5));
+  }, []);
+
+  /* ── Auth callbacks ─────────────────────────────────────────── */
+  const login = useCallback(async (ssoToken: string) => {
+    setAuthLoading(true);
+    try {
+      const response = await apiLogin(ssoToken);
+      setToken(response.access_token);
+      setUser(response.user);
+    } finally {
+      setAuthLoading(false);
+    }
+  }, []);
+
+  const logout = useCallback(() => {
+    apiLogout();
+    setToken(null);
+    setUser(null);
   }, []);
 
   return (
@@ -116,6 +183,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         userRisk,
         isAnalyzing,
         isSubmitting,
+        user,
+        token,
+        isAuthenticated: !!token,
+        authLoading,
         setPolicyMode,
         setTextSize,
         toggleHighContrast,
@@ -126,6 +197,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setUserRisk,
         setIsAnalyzing,
         setIsSubmitting,
+        login,
+        logout,
       }}
     >
       {children}

@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Download } from "lucide-react";
-import { getAuditEvents } from "../api/index.ts";
+import { getAuditEvents } from "../api/mock.ts";
+import { auditService } from "../api/index.ts";
 import { exportAuditCsv } from "../utils/csv.ts";
 import type {
   AuditEvent,
@@ -18,7 +19,54 @@ export default function AuditPage() {
   const [category, setCategory] = useState<DetectionCategory | "all">("all");
 
   useEffect(() => {
-    getAuditEvents().then(setEvents);
+    let mounted = true;
+
+    // Try backend first, fall back to mock
+    auditService
+      .getAuditEntries()
+      .then((entries) => {
+        if (!mounted) return;
+        // Map backend AuditEntry to legacy AuditEvent shape
+        const mapped: AuditEvent[] = entries.map((e) => ({
+          id: e.audit_id,
+          timestamp: new Date(e.timestamp).getTime(),
+          user: e.employee_name,
+          severity: (e.risk_score >= 70
+            ? "high"
+            : e.risk_score >= 40
+              ? "medium"
+              : "low") as RiskLevel,
+          categories: e.categories.map((c) => {
+            const catMap: Record<string, DetectionCategory> = {
+              pii: "PII",
+              credentials: "Credentials",
+              financial: "Financial",
+              health: "Health",
+              internal: "Internal",
+            };
+            return catMap[c] || ("Internal" as DetectionCategory);
+          }),
+          action: (e.action === "blocked"
+            ? "blocked"
+            : e.action === "rewritten"
+              ? "rewritten"
+              : "allowed") as AuditEvent["action"],
+          policyVersion: e.policy_mode,
+          redactedSnippet: e.redacted_snippet,
+          reason: `Risk score: ${e.risk_score}`,
+        }));
+        setEvents(mapped);
+      })
+      .catch(() => {
+        // Fall back to mock data
+        if (mounted) {
+          getAuditEvents().then(setEvents);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const filtered = useMemo(() => {

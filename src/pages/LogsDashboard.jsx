@@ -1,18 +1,62 @@
+import { useState, useEffect } from 'react';
 import { BarChart3, TrendingDown, ShieldCheck, AlertTriangle } from 'lucide-react';
 import LogTable from '../components/LogTable';
 import { MOCK_LOGS } from '../data/mockData';
+import { auditService } from '../api/index.ts';
 
 /**
  * LogsDashboard — Coca-Cola themed risk log with stat cards.
- * Uses brand red for primary stat, 16px card radius.
+ * Tries backend audit API first, falls back to mock data.
  */
 export default function LogsDashboard() {
-  const totalEvents = MOCK_LOGS.length;
-  const blockedCount = MOCK_LOGS.filter((l) => l.action === 'Blocked').length;
-  const rewrittenCount = MOCK_LOGS.filter((l) => l.action === 'Rewritten').length;
-  const avgConfidence = Math.round(
-    (MOCK_LOGS.reduce((sum, l) => sum + l.confidence, 0) / totalEvents) * 100
-  );
+  const [logs, setLogs] = useState(MOCK_LOGS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    auditService
+      .getAuditEntries()
+      .then((entries) => {
+        if (!mounted) return;
+        // Map backend audit entries to the shape LogTable expects
+        const mapped = entries.map((e, i) => ({
+          id: i + 1,
+          timestamp: e.timestamp,
+          user: e.employee_name,
+          team: e.department,
+          category: e.categories?.[0] || 'Unknown',
+          action:
+            e.action === 'allowed'
+              ? 'Allowed'
+              : e.action === 'warning'
+                ? 'Allowed with Warning'
+                : e.action === 'rewritten'
+                  ? 'Rewritten'
+                  : 'Blocked',
+          policyVersion: e.policy_mode,
+          confidence: e.risk_score / 100,
+          snippet: e.redacted_snippet,
+        }));
+        setLogs(mapped);
+      })
+      .catch(() => {
+        // Keep mock data as fallback
+      })
+      .finally(() => mounted && setLoading(false));
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const totalEvents = logs.length;
+  const blockedCount = logs.filter((l) => l.action === 'Blocked').length;
+  const rewrittenCount = logs.filter((l) => l.action === 'Rewritten').length;
+  const avgConfidence =
+    totalEvents > 0
+      ? Math.round(
+          (logs.reduce((sum, l) => sum + l.confidence, 0) / totalEvents) * 100
+        )
+      : 0;
 
   const stats = [
     {
@@ -53,7 +97,10 @@ export default function LogsDashboard() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white rounded-[16px] border border-neutral-200 shadow-sm p-4 flex items-center gap-3">
+          <div
+            key={s.label}
+            className="bg-white rounded-[16px] border border-neutral-200 shadow-sm p-4 flex items-center gap-3"
+          >
             <div className={`p-2.5 rounded-[10px] ${s.color}`}>{s.icon}</div>
             <div>
               <p className="text-2xl font-bold text-black">{s.value}</p>
@@ -63,7 +110,11 @@ export default function LogsDashboard() {
         ))}
       </div>
 
-      <LogTable logs={MOCK_LOGS} />
+      {loading ? (
+        <div className="text-center py-8 text-neutral-400 text-sm">Loading logs...</div>
+      ) : (
+        <LogTable logs={logs} />
+      )}
     </div>
   );
 }

@@ -3,10 +3,12 @@ import { Bot, CheckCircle2 } from 'lucide-react';
 import PromptInput from '../components/PromptInput';
 import SafetyWarning from '../components/SafetyWarning';
 import SaferRewritePanel from '../components/SaferRewritePanel';
-import { analyzePrompt, rewritePrompt } from '../data/mockData';
+import { analyzePrompt as mockAnalyze, rewritePrompt } from '../data/mockData';
+import { promptService } from '../api/index.ts';
 
 /**
  * EmployeeView — Coca-Cola themed main prompt interface.
+ * Calls the backend prompt API first, falls back to mock analysis.
  */
 export default function EmployeeView({ mode }) {
   const [analyzing, setAnalyzing] = useState(false);
@@ -17,7 +19,7 @@ export default function EmployeeView({ mode }) {
   const [aiResponse, setAiResponse] = useState('');
 
   const handleAnalyze = useCallback(
-    (prompt) => {
+    async (prompt) => {
       setResult(null);
       setRewritten('');
       setSaferSent(false);
@@ -25,8 +27,43 @@ export default function EmployeeView({ mode }) {
       setOriginalPrompt(prompt);
       setAnalyzing(true);
 
-      setTimeout(() => {
-        const analysisResult = analyzePrompt(prompt, mode);
+      try {
+        // Try backend API first
+        const backendResult = await promptService.analyzePrompt({
+          prompt_text: prompt,
+          policy_mode: mode,
+        });
+
+        // Map backend response to the shape our components expect
+        const isSafe = backendResult.action === 'allowed';
+        const mapped = {
+          safe: isSafe,
+          category: backendResult.flags?.[0]?.category || null,
+          label: backendResult.flags?.[0]?.description || null,
+          explanation: backendResult.explanation,
+          confidence: backendResult.flags?.[0]?.confidence || 0,
+          rewriteHint: backendResult.explanation,
+          riskScore: backendResult.risk_score,
+          action: backendResult.action,
+          promptId: backendResult.prompt_id,
+        };
+
+        setResult(mapped);
+
+        if (!isSafe && backendResult.rewritten_prompt) {
+          setRewritten(backendResult.rewritten_prompt);
+        } else if (!isSafe) {
+          setRewritten(rewritePrompt(prompt));
+        }
+
+        if (isSafe) {
+          setAiResponse(
+            'Thank you for your prompt! Here is a simulated AI response. In a production system, your prompt would be forwarded to the internal AI model and the real response would appear here.'
+          );
+        }
+      } catch {
+        // Fallback to client-side mock analysis
+        const analysisResult = mockAnalyze(prompt, mode);
         setResult(analysisResult);
 
         if (!analysisResult.safe) {
@@ -36,9 +73,9 @@ export default function EmployeeView({ mode }) {
             'Thank you for your prompt! Here is a simulated AI response. In a production system, your prompt would be forwarded to the internal AI model and the real response would appear here.'
           );
         }
+      }
 
-        setAnalyzing(false);
-      }, 800);
+      setAnalyzing(false);
     },
     [mode]
   );
