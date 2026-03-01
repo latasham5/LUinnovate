@@ -9,8 +9,9 @@
     },
     {
       "name": "phantom-frontend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "frontend"],
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js", "--host", "localhost", "--port", "5173"],
+      "cwd": "frontend",
       "port": 5173
     }
   ]
