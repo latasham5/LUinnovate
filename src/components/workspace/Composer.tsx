@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, ArrowLeft } from "lucide-react";
 import { useApp } from "../../state/AppContext.tsx";
 import {
   analyzePromptMock as analyzePrompt,
@@ -27,6 +27,10 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
     setIsSubmitting,
     isAnalyzing,
     isSubmitting,
+    isViewingHistory,
+    startNewChat,
+    lastAnalysis,
+    user,
   } = useApp();
 
   const handleSend = useCallback(async () => {
@@ -121,9 +125,9 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
       const auditEvent: AuditEvent = {
         id: generateId(),
         timestamp: Date.now(),
-        user: "current-user@company.com",
-        severity: "medium",
-        categories: [],
+        user: user?.name ?? "unknown",
+        severity: lastAnalysis?.riskLevel ?? "medium",
+        categories: lastAnalysis?.categories ?? [],
         action: "rewritten",
         policyVersion: "v2.4",
         redactedSnippet: saferPrompt.slice(0, 80),
@@ -156,7 +160,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
         textareaRef.current?.focus();
       }
     },
-    [addMessage, setUserRisk, setIsSubmitting, setLastAnalysis]
+    [addMessage, setUserRisk, setIsSubmitting, setLastAnalysis, lastAnalysis, user]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -166,11 +170,25 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
     }
   };
 
-  const disabled = isAnalyzing || isSubmitting;
+  const disabled = isAnalyzing || isSubmitting || isViewingHistory;
 
   return {
     composerUI: (
       <div className="border-t border-gray-200 bg-white p-4">
+        {isViewingHistory && (
+          <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-3">
+            <span className="text-sm text-amber-800 font-medium">
+              Viewing previous chat
+            </span>
+            <button
+              onClick={startNewChat}
+              className="flex items-center gap-1.5 text-xs font-medium text-amber-700 hover:text-amber-900 transition-colors cursor-pointer"
+            >
+              <ArrowLeft size={13} />
+              Back to current chat
+            </button>
+          </div>
+        )}
         <label htmlFor="composer-input" className="sr-only">
           Message to AI tool
         </label>
@@ -182,7 +200,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Message to AI tool"
+              placeholder={isViewingHistory ? "Switch to a new chat to send messages" : "Message to AI tool"}
               disabled={disabled}
               rows={2}
               className="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-brand-red focus:ring-0 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400"

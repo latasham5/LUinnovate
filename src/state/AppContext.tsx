@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import type {
@@ -22,6 +23,26 @@ import {
   type BackendLoginResponse,
 } from "../api/authService.ts";
 
+/* ── Chat session type ─────────────────────────────────────────── */
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  timestamp: number;
+  messages: ChatMessage[];
+}
+
+/* ── Per-user state snapshot (saved/restored on account switch) ── */
+
+interface UserSnapshot {
+  messages: ChatMessage[];
+  chatHistory: ChatSession[];
+  activeChatId: string | null;
+  flaggedEvents: FlaggedEvent[];
+  userRisk: UserRisk;
+  lastAnalysis: AnalysisResult | null;
+}
+
 /* ── State shape ───────────────────────────────────────────────── */
 
 interface AppState {
@@ -37,6 +58,10 @@ interface AppState {
   token: string | null;
   isAuthenticated: boolean;
   authLoading: boolean;
+  // Chat sessions
+  chatHistory: ChatSession[];
+  activeChatId: string | null;
+  isViewingHistory: boolean;
 }
 
 interface AppContextValue extends AppState {
@@ -53,6 +78,10 @@ interface AppContextValue extends AppState {
   // Auth actions
   login: (ssoToken: string) => Promise<void>;
   logout: () => void;
+  // Chat session actions
+  startNewChat: () => void;
+  loadChat: (sessionId: string) => void;
+  deleteChat: (sessionId: string) => void;
 }
 
 /* ── Seed messages ─────────────────────────────────────────────── */
@@ -106,6 +135,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /* ── Chat session state ─────────────────────────────────────── */
+  // Per-user snapshot map: userId -> full state snapshot
+  const userSnapshotsRef = useRef<Record<string, UserSnapshot>>({});
+  const [activeChatId, setActiveChatId] = useState<string | null>(
+    () => `chat-${Date.now()}`
+  );
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
+  // Bump this to force re-render when we mutate the ref (e.g. deleteChat)
+  const [, setSnapshotVersion] = useState(0);
+
   /* ── Auth state ─────────────────────────────────────────────── */
   const [user, setUser] = useState<BackendLoginResponse | null>(getStoredUser());
   const [token, setToken] = useState<string | null>(getStoredToken());
@@ -137,23 +176,150 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFlaggedEvents((prev) => [event, ...prev].slice(0, 5));
   }, []);
 
-  /* ── Auth callbacks ─────────────────────────────────────────── */
-  const login = useCallback(async (ssoToken: string) => {
-    setAuthLoading(true);
-    try {
-      const response = await apiLogin(ssoToken);
-      setToken(response.session_token);
-      setUser(response);
-    } finally {
-      setAuthLoading(false);
+  /* ── Session helpers ────────────────────────────────────────── */
+
+  const DEFAULT_RISK: UserRisk = {
+    flaggedCount: 0,
+    rewrittenCount: 0,
+    trainingRequired: false,
+    trainingCompleted: false,
+  };
+
+  /** Save a full snapshot of the current user's state */
+  const saveUserSnapshot = useCallback(
+    (userId: string, currentMessages: ChatMessage[], chatId: string | null) => {
+      // Build updated chat history: archive active chat if it has user messages
+      const existing = userSnapshotsRef.current[userId];
+      let history = existing?.chatHistory ?? [];
+
+      const hasUserMessages = currentMessages.some((m) => m.role === "user");
+      if (hasUserMessages && chatId && !history.some((s) => s.id === chatId)) {
+        const firstUserMsg = currentMessages.find((m) => m.role === "user");
+        const title = firstUserMsg?.content.slice(0, 50) || "Untitled chat";
+        history = [
+          { id: chatId, title, timestamp: Date.now(), messages: [...currentMessages] },
+          ...history,
+        ];
+      }
+
+      userSnapshotsRef.current[userId] = {
+        messages: [...currentMessages],
+        chatHistory: history,
+        activeChatId: chatId,
+        flaggedEvents: [...flaggedEvents],
+        userRisk: { ...userRisk },
+        lastAnalysis,
+      };
+    },
+    [flaggedEvents, userRisk, lastAnalysis]
+  );
+
+  /** Restore a user's full snapshot (or return fresh defaults) */
+  const restoreUserSnapshot = useCallback((userId: string) => {
+    const snap = userSnapshotsRef.current[userId];
+    if (snap) {
+      setMessages([...snap.messages]);
+      setActiveChatId(snap.activeChatId);
+      setFlaggedEvents([...snap.flaggedEvents]);
+      setUserRisk({ ...snap.userRisk });
+      setLastAnalysis(snap.lastAnalysis);
+    } else {
+      setMessages([...INITIAL_MESSAGES]);
+      setActiveChatId(`chat-${Date.now()}`);
+      setFlaggedEvents([]);
+      setUserRisk({ ...DEFAULT_RISK });
+      setLastAnalysis(null);
     }
+    setIsViewingHistory(false);
   }, []);
 
+  /** Get chat history for the current user */
+  const chatHistory = user
+    ? userSnapshotsRef.current[user.user_id]?.chatHistory ?? []
+    : [];
+
+  const startNewChat = useCallback(() => {
+    if (user) {
+      saveUserSnapshot(user.user_id, messages, activeChatId);
+    }
+    setMessages([...INITIAL_MESSAGES]);
+    setActiveChatId(`chat-${Date.now()}`);
+    setIsViewingHistory(false);
+    setLastAnalysis(null);
+  }, [user, messages, activeChatId, saveUserSnapshot]);
+
+  const loadChat = useCallback(
+    (sessionId: string) => {
+      const userId = user?.user_id;
+      if (!userId) return;
+      const snap = userSnapshotsRef.current[userId];
+      const session = snap?.chatHistory.find((s) => s.id === sessionId);
+      if (session) {
+        setMessages([...session.messages]);
+        setActiveChatId(session.id);
+        setIsViewingHistory(true);
+        setLastAnalysis(null);
+      }
+    },
+    [user]
+  );
+
+  const deleteChat = useCallback(
+    (sessionId: string) => {
+      const userId = user?.user_id;
+      if (!userId) return;
+      const snap = userSnapshotsRef.current[userId];
+      if (snap) {
+        snap.chatHistory = snap.chatHistory.filter((s) => s.id !== sessionId);
+      }
+      // If we're currently viewing the deleted session, go back to a new chat
+      if (activeChatId === sessionId) {
+        setMessages([...INITIAL_MESSAGES]);
+        setActiveChatId(`chat-${Date.now()}`);
+        setIsViewingHistory(false);
+        setLastAnalysis(null);
+      }
+      // Force re-render since we mutated the ref
+      setSnapshotVersion((v) => v + 1);
+    },
+    [user, activeChatId]
+  );
+
+  /* ── Auth callbacks ─────────────────────────────────────────── */
+  const login = useCallback(
+    async (ssoToken: string) => {
+      setAuthLoading(true);
+      try {
+        // Save outgoing user's full state
+        if (user) {
+          saveUserSnapshot(user.user_id, messages, activeChatId);
+        }
+        const response = await apiLogin(ssoToken);
+        setToken(response.session_token);
+        setUser(response);
+        // Restore incoming user's state (or fresh defaults)
+        restoreUserSnapshot(response.user_id);
+      } finally {
+        setAuthLoading(false);
+      }
+    },
+    [user, messages, activeChatId, saveUserSnapshot, restoreUserSnapshot]
+  );
+
   const logout = useCallback(() => {
+    if (user) {
+      saveUserSnapshot(user.user_id, messages, activeChatId);
+    }
     apiLogout();
     setToken(null);
     setUser(null);
-  }, []);
+    setMessages([...INITIAL_MESSAGES]);
+    setActiveChatId(null);
+    setFlaggedEvents([]);
+    setUserRisk({ ...DEFAULT_RISK });
+    setIsViewingHistory(false);
+    setLastAnalysis(null);
+  }, [user, messages, activeChatId, saveUserSnapshot]);
 
   return (
     <AppContext.Provider
@@ -169,6 +335,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         token,
         isAuthenticated: !!token,
         authLoading,
+        chatHistory,
+        activeChatId,
+        isViewingHistory,
         setPolicyMode,
         setTextSize,
         toggleHighContrast,
@@ -181,6 +350,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setIsSubmitting,
         login,
         logout,
+        startNewChat,
+        loadChat,
+        deleteChat,
       }}
     >
       {children}

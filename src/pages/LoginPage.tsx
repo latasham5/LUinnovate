@@ -30,6 +30,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [ssoToken, setSsoToken] = useState("");
   const [error, setError] = useState("");
+  const [showLoading, setShowLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,7 +38,8 @@ export default function LoginPage() {
     setError("");
     try {
       await login(ssoToken.trim());
-      navigate("/");
+      setShowLoading(true);
+      setTimeout(() => navigate("/"), 1500);
     } catch {
       setError("Invalid employee ID. Try one of the demo users below.");
     }
@@ -48,10 +50,28 @@ export default function LoginPage() {
     setSsoToken(token);
     try {
       await login(token);
-      navigate("/");
+      setShowLoading(true);
+      setTimeout(() => navigate("/"), 1500);
     } catch {
       setError("Backend not reachable. Make sure the server is running on port 8000.");
     }
+  }
+
+  if (showLoading) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center gap-6">
+        <Shield className="w-16 h-16 text-[#ea0000] animate-pulse" />
+        <img
+          src="/the-coca-cola-company-logo.svg"
+          alt="The Coca-Cola Company"
+          className="h-5 invert"
+        />
+        <p className="text-white/80 text-sm font-medium tracking-wide">
+          Initializing PromptGuard...
+        </p>
+        <Loader2 className="w-5 h-5 text-[#ea0000] animate-spin" />
+      </div>
+    );
   }
 
   return (

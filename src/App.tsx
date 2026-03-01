@@ -17,6 +17,10 @@ import {
   Moon,
   LogOut,
   Shield,
+  Clock,
+  Plus,
+  ChevronDown,
+  Trash2,
 } from "lucide-react";
 import { AppProvider, useApp } from "./state/AppContext.tsx";
 import PolicySelector from "./components/PolicySelector.jsx";
@@ -65,9 +69,21 @@ function RequireRole({ roles, children }: { roles: string[]; children: React.Rea
 }
 
 /* ── App shell (sidebar + top bar + pages) ─────────────────────── */
+function formatRelativeTime(timestamp: number): string {
+  const diff = Date.now() - timestamp;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
 function AppShell() {
-  const { settings, toggleDarkMode, user, logout } = useApp();
+  const { settings, toggleDarkMode, user, logout, chatHistory, startNewChat, loadChat, deleteChat } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(true);
   const [mode, setMode] = useState("balanced");
 
   const initials = user
@@ -149,6 +165,69 @@ function AppShell() {
             </NavLink>
           ))}
         </nav>
+
+        {/* Previous Chats */}
+        <div className="px-3 pb-2 border-t border-neutral-800">
+          <button
+            onClick={() => setHistoryOpen((o) => !o)}
+            className="flex items-center justify-between w-full px-3 py-2.5 text-xs font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <Clock size={13} />
+              Previous Chats
+            </span>
+            <ChevronDown
+              size={13}
+              className={`transition-transform ${historyOpen ? "" : "-rotate-90"}`}
+            />
+          </button>
+
+          {historyOpen && (
+            <div className="space-y-0.5">
+              <button
+                onClick={() => { startNewChat(); setSidebarOpen(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium text-green-400 hover:bg-neutral-900 transition-colors cursor-pointer"
+              >
+                <Plus size={13} />
+                New Chat
+              </button>
+
+              {chatHistory.length === 0 ? (
+                <p className="px-3 py-2 text-[10px] text-neutral-600">
+                  No previous chats
+                </p>
+              ) : (
+                <div className="max-h-40 overflow-y-auto space-y-0.5">
+                  {chatHistory.slice(0, 5).map((session) => (
+                    <div
+                      key={session.id}
+                      className="flex items-center w-full rounded-lg hover:bg-neutral-900 transition-colors group"
+                    >
+                      <button
+                        onClick={() => { loadChat(session.id); setSidebarOpen(false); }}
+                        className="flex-1 flex items-center justify-between px-3 py-2 text-left cursor-pointer min-w-0"
+                      >
+                        <span className="text-xs text-neutral-400 group-hover:text-white truncate max-w-[100px]">
+                          {session.title}
+                        </span>
+                        <span className="text-[10px] text-neutral-600 shrink-0 ml-2">
+                          {formatRelativeTime(session.timestamp)}
+                        </span>
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); deleteChat(session.id); }}
+                        className="p-1.5 mr-1 text-neutral-700 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+                        aria-label="Delete chat"
+                      >
+                        <Trash2 size={11} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* User + logout */}
         {user && (
