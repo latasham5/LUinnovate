@@ -32,6 +32,10 @@ class PromptResponse(BaseModel):
     severity_color: Optional[str] = None
     warning_message: Optional[str] = None
     disclaimers: list[str] = []
+    detected_categories: list[str] = []
+    risk_score: float = 0.0
+    explanation: str = ""
+    detected_details: list[dict] = []
 
 
 @router.post("/", response_model=PromptResponse)
@@ -84,12 +88,39 @@ async def handle_prompt(request: PromptRequest, user: dict = Depends(get_current
     except Exception:
         pass  # Logging failure should not break the response
 
+    # Build detailed explanation of ALL findings
+    all_categories = [c.value for c in analysis.detected_categories]
+    detected_details = []
+    for element in analysis.detected_elements:
+        detected_details.append({
+            "text": element.text[:50] + "..." if len(element.text) > 50 else element.text,
+            "category": element.category.value,
+            "confidence": round(element.confidence, 2),
+        })
+
+    # Build human-readable explanation listing ALL issues
+    explanation_parts = []
+    category_counts: dict[str, int] = {}
+    for element in analysis.detected_elements:
+        cat = element.category.value
+        category_counts[cat] = category_counts.get(cat, 0) + 1
+
+    for cat, count in category_counts.items():
+        explanation_parts.append(f"{count} {cat} detection{'s' if count > 1 else ''}")
+
+    explanation = f"Found: {', '.join(explanation_parts)}." if explanation_parts else "No issues detected."
+    explanation += f" Risk score: {analysis.risk_score:.0f}/100. Action: {result.get('action', 'ALLOWED')}."
+
     return PromptResponse(
         action=result.get("action", "ALLOWED"),
         response_content=result.get("response_content"),
-        rewritten_prompt=result.get("rewritten_prompt"),
-        rewrite_explanation=result.get("rewrite_explanation"),
-        severity_color=result.get("severity_color"),
+        rewritten_prompt=result.get("rewritten_prompt") or analysis.rewritten_prompt,
+        rewrite_explanation=result.get("rewrite_explanation") or analysis.rewrite_explanation,
+        severity_color=result.get("severity_color") or (analysis.severity_color.value if analysis.severity_color else None),
         warning_message=result.get("warning_message"),
         disclaimers=result.get("disclaimers", []),
+        detected_categories=all_categories,
+        risk_score=analysis.risk_score,
+        explanation=explanation,
+        detected_details=detected_details,
     )

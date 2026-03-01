@@ -33,8 +33,8 @@ SESSION_TIMEOUT_MINUTES = 30
 DEFAULT_RETENTION_DAYS = 365
 
 # Hugging Face model identifiers
-HF_INTENT_MODEL = "facebook/bart-large-mnli"
-HF_RISKY_INTENT_MODEL = "unitary/toxic-bert"
+HF_INTENT_MODEL = "MoritzLaurer/deberta-v3-base-zeroshot-v2.0"
+HF_RISKY_INTENT_MODEL = "s-nlp/roberta_toxicity_classifier"
 
 # spaCy model
 SPACY_MODEL = "en_core_web_sm"

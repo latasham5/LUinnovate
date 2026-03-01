@@ -66,10 +66,11 @@ async def receive_prompt(
         deployment_mode=policy_context.deployment_mode.value,
     )
 
-    # Step 4: Generate rewrite if action is REWRITTEN
+    # Step 4: Generate rewrite for ANY prompt with detected elements
+    # Even BLOCKED prompts get a rewrite so users can see what a safe version looks like
     rewritten_prompt = None
     rewrite_explanation = None
-    if action == ActionType.REWRITTEN:
+    if scan_results["detected_elements"]:
         rewrite_result = generate_safer_rewrite(
             raw_prompt=raw_prompt,
             flagged_elements=scan_results["detected_elements"],

@@ -30,6 +30,10 @@ venv/
 .venv/
 env/
 
+# Frontend (subfolder)
+frontend/node_modules/
+frontend/dist/
+
 # spaCy models (downloaded at runtime)
 models/
 

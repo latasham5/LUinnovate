@@ -24,12 +24,17 @@ async def execute_action(
     action = analysis.recommended_action
 
     if action == ActionType.BLOCKED:
-        return block_prompt(
+        result = block_prompt(
             user_id=user_id,
             raw_prompt=raw_prompt,
             reason=f"Blocked due to {', '.join(c.value for c in analysis.detected_categories)}",
             policy_version="1.0.0",
         )
+        # Include rewrite info even for blocked prompts so frontend can show ALL findings
+        result["rewritten_prompt"] = analysis.rewritten_prompt
+        result["rewrite_explanation"] = analysis.rewrite_explanation
+        result["severity_color"] = analysis.severity_color.value if analysis.severity_color else "RED"
+        return result
 
     elif action == ActionType.REWRITTEN:
         # Forward the rewritten prompt to CokeGPT
