@@ -11,6 +11,7 @@ function AppShell() {
   const rootClasses = [
     "flex flex-col h-screen",
     settings.highContrast ? "high-contrast" : "",
+    settings.darkMode ? "dark" : "",
     `text-size-${settings.textSize}`,
   ]
     .filter(Boolean)

@@ -29,6 +29,7 @@ interface AppContextValue extends AppState {
   setPolicyMode: (mode: PolicyMode) => void;
   setTextSize: (size: TextSize) => void;
   toggleHighContrast: () => void;
+  toggleDarkMode: () => void;
   addMessage: (msg: ChatMessage) => void;
   setLastAnalysis: (result: AnalysisResult | null) => void;
   addFlaggedEvent: (event: FlaggedEvent) => void;
@@ -67,6 +68,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     policyMode: "balanced",
     textSize: "md",
     highContrast: false,
+    darkMode: false,
   });
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [lastAnalysis, setLastAnalysis] = useState<AnalysisResult | null>(null);
@@ -92,6 +94,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSettings((s) => ({ ...s, highContrast: !s.highContrast }));
   }, []);
 
+  const toggleDarkMode = useCallback(() => {
+    setSettings((s) => ({ ...s, darkMode: !s.darkMode }));
+  }, []);
+
   const addMessage = useCallback((msg: ChatMessage) => {
     setMessages((prev) => [...prev, msg]);
   }, []);
@@ -113,6 +119,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setPolicyMode,
         setTextSize,
         toggleHighContrast,
+        toggleDarkMode,
         addMessage,
         setLastAnalysis,
         addFlaggedEvent,

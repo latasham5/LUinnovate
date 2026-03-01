@@ -103,3 +103,102 @@ body {
   background: var(--color-gray-300);
   border-radius: 3px;
 }
+
+/* ===== Dark Mode ===== */
+
+.dark {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+/* Surfaces */
+.dark .bg-white { background-color: #1e293b !important; }
+.dark .bg-gray-50 { background-color: #0f172a !important; }
+.dark .bg-gray-100 { background-color: #1e293b !important; }
+.dark .bg-gray-200 { background-color: #334155 !important; }
+
+/* Borders */
+.dark .border-gray-100 { border-color: #1e293b !important; }
+.dark .border-gray-200 { border-color: #334155 !important; }
+.dark .border-gray-300 { border-color: #475569 !important; }
+.dark .border-b { border-color: #334155; }
+
+/* Text */
+.dark .text-gray-900 { color: #f1f5f9 !important; }
+.dark .text-gray-800 { color: #e2e8f0 !important; }
+.dark .text-gray-700 { color: #cbd5e1 !important; }
+.dark .text-gray-600 { color: #94a3b8 !important; }
+.dark .text-gray-500 { color: #94a3b8 !important; }
+.dark .text-gray-400 { color: #64748b !important; }
+.dark .text-gray-300 { color: #64748b !important; }
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover { background-color: #1e293b !important; }
+.dark .hover\:bg-gray-100:hover { background-color: #334155 !important; }
+.dark .hover\:bg-gray-200:hover { background-color: #475569 !important; }
+.dark .hover\:text-gray-900:hover { color: #f1f5f9 !important; }
+.dark .hover\:text-gray-700:hover { color: #cbd5e1 !important; }
+
+/* Toggle track */
+.dark .bg-gray-300 { background-color: #475569 !important; }
+
+/* Brand red light (active button bg) */
+.dark .bg-brand-red-light { background-color: #3b1419 !important; }
+
+/* Red-50 surface (intercept dialog icon bg) */
+.dark .bg-red-50 { background-color: #3b1419 !important; }
+
+/* Semantic accent surfaces — dark mode */
+.dark .bg-emerald-50 { background-color: #0d2818 !important; }
+.dark .bg-amber-50 { background-color: #2a1f0a !important; }
+.dark .bg-emerald-100 { background-color: #0d2818 !important; }
+.dark .bg-amber-100 { background-color: #2a1f0a !important; }
+.dark .bg-red-100 { background-color: #3b1419 !important; }
+
+/* Semantic accent text — lighter in dark mode */
+.dark .text-emerald-700 { color: #6ee7b7 !important; }
+.dark .text-emerald-800 { color: #a7f3d0 !important; }
+.dark .text-emerald-600 { color: #34d399 !important; }
+.dark .text-amber-700 { color: #fbbf24 !important; }
+.dark .text-amber-800 { color: #fcd34d !important; }
+.dark .text-amber-600 { color: #f59e0b !important; }
+.dark .text-red-700 { color: #fca5a5 !important; }
+.dark .text-red-800 { color: #fecaca !important; }
+
+/* Semantic accent borders */
+.dark .border-emerald-200 { border-color: #065f46 !important; }
+.dark .border-emerald-300 { border-color: #047857 !important; }
+.dark .border-emerald-400 { border-color: #059669 !important; }
+.dark .border-amber-200 { border-color: #92400e !important; }
+.dark .border-red-200 { border-color: #991b1b !important; }
+.dark .border-red-400 { border-color: #b91c1c !important; }
+
+/* Form elements */
+.dark select,
+.dark textarea,
+.dark input {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+.dark select:focus,
+.dark textarea:focus,
+.dark input:focus {
+  border-color: var(--color-brand-red) !important;
+}
+
+/* Disabled form elements */
+.dark .disabled\:bg-gray-50:disabled { background-color: #0f172a !important; }
+.dark .disabled\:text-gray-400:disabled { color: #475569 !important; }
+
+/* Shadows — subtle glow in dark mode */
+.dark .shadow-sm { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important; }
+.dark .shadow-lg { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important; }
+.dark .shadow-xl { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important; }
+
+/* Scrollbar — dark mode */
+.dark ::-webkit-scrollbar-track { background: #1e293b; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+/* Logo — invert for dark mode */
+.dark { --logo-filter: invert(1); }

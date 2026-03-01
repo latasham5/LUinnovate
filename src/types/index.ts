@@ -61,4 +61,5 @@ export interface AppSettings {
   policyMode: PolicyMode;
   textSize: TextSize;
   highContrast: boolean;
+  darkMode: boolean;
 }

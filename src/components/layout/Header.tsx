@@ -4,6 +4,8 @@ import {
   ChevronDown,
   Type,
   Eye,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useApp } from "../../state/AppContext.tsx";
@@ -35,6 +37,7 @@ export default function Header() {
     setPolicyMode,
     setTextSize,
     toggleHighContrast,
+    toggleDarkMode,
   } = useApp();
 
   const [policyOpen, setPolicyOpen] = useState(false);
@@ -58,14 +61,20 @@ export default function Header() {
   return (
     <header className="border-b border-gray-200 bg-white px-6 py-3 flex items-center justify-between flex-shrink-0">
       <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-brand-red" aria-hidden="true" />
-          <span className="font-semibold text-gray-900 text-base">
-            PromptGuard Agent
-          </span>
-          <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium">
-            Demo
-          </span>
+        <div className="flex items-center gap-4">
+          <img
+            src="/the-coca-cola-company-logo.svg"
+            alt="The Coca-Cola Company"
+            className="h-5 w-auto text-gray-900"
+            style={{ filter: "var(--logo-filter, none)" }}
+          />
+          <span className="text-gray-300 text-xl font-extralight select-none" aria-hidden="true">|</span>
+          <div className="flex items-center gap-1.5">
+            <Shield className="w-4 h-4 text-brand-red" aria-hidden="true" />
+            <span className="font-semibold text-gray-900 text-sm">
+              PromptGuard
+            </span>
+          </div>
         </div>
 
         <nav aria-label="Main navigation" className="flex items-center gap-1">
@@ -82,6 +91,20 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Dark mode toggle */}
+        <button
+          onClick={toggleDarkMode}
+          className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+          aria-label={settings.darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          aria-pressed={settings.darkMode}
+        >
+          {settings.darkMode ? (
+            <Sun className="w-4 h-4 text-amber-500" aria-hidden="true" />
+          ) : (
+            <Moon className="w-4 h-4 text-gray-500" aria-hidden="true" />
+          )}
+        </button>
+
         {/* Policy mode dropdown */}
         <div className="relative" ref={policyRef}>
           <button
