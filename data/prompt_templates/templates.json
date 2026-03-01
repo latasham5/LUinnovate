@@ -1,0 +1,45 @@
+{
+  "description": "Pre-approved safe prompt templates by role and department",
+  "templates": [
+    {
+      "id": "TPL_001",
+      "title": "General Summary Request",
+      "template": "Summarize the following topic: [TOPIC]. Focus on key points and actionable insights.",
+      "role": "all",
+      "department": "all",
+      "category": "summarization"
+    },
+    {
+      "id": "TPL_002",
+      "title": "Marketing Copy Draft",
+      "template": "Draft marketing copy for a [PRODUCT_TYPE] targeting [AUDIENCE]. Tone: [TONE]. Key message: [MESSAGE].",
+      "role": "all",
+      "department": "Marketing",
+      "category": "content_generation"
+    },
+    {
+      "id": "TPL_003",
+      "title": "Data Analysis Template",
+      "template": "Analyze the following trends: [DESCRIBE_TRENDS]. What patterns emerge and what actions would you recommend?",
+      "role": "analyst",
+      "department": "all",
+      "category": "data_extraction"
+    },
+    {
+      "id": "TPL_004",
+      "title": "Report Structure Request",
+      "template": "Create an outline for a [REPORT_TYPE] report covering: [TOPICS]. Include sections for executive summary, findings, and recommendations.",
+      "role": "all",
+      "department": "all",
+      "category": "content_generation"
+    },
+    {
+      "id": "TPL_005",
+      "title": "Supply Chain Query",
+      "template": "What are best practices for [SUPPLY_CHAIN_TOPIC] in the beverage industry? Include recent trends and optimization strategies.",
+      "role": "all",
+      "department": "Supply Chain",
+      "category": "question"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "module_id": "pii_training",
+  "title": "Protecting Personally Identifiable Information (PII)",
+  "description": "Learn to recognize and avoid sharing PII when using AI tools.",
+  "estimated_minutes": 10,
+  "scenarios": [
+    {
+      "id": "PII_S1",
+      "title": "Customer Name in Prompt",
+      "description": "You need AI help drafting an email to a client. Which prompt is safer?",
+      "unsafe_example": "Draft an email to John Smith at Walmart about our Q3 pricing update.",
+      "safe_example": "Draft an email to a retail client about a quarterly pricing update.",
+      "explanation": "Remove specific names and company identifiers. Use generic descriptions instead."
+    },
+    {
+      "id": "PII_S2",
+      "title": "Employee Contact Information",
+      "description": "You want AI to format a contact list. Which approach protects privacy?",
+      "unsafe_example": "Format this list: Sarah Johnson, 555-0123, sarah.j@coca-cola.com, SSN 123-45-6789",
+      "safe_example": "Help me create a template for formatting employee contact lists with fields: name, phone, email.",
+      "explanation": "Never paste real employee data. Ask for templates or use placeholder data instead."
+    }
+  ],
+  "quiz": [
+    {
+      "question_id": "PII_Q1",
+      "question": "Which of the following is considered PII?",
+      "options": ["A company's stock price", "An employee's Social Security Number", "A product's shelf life", "A department's budget code"],
+      "correct_answer": "An employee's Social Security Number",
+      "explanation": "Social Security Numbers are personally identifiable information that must never be shared with AI tools."
+    },
+    {
+      "question_id": "PII_Q2",
+      "question": "What should you do before pasting customer data into an AI prompt?",
+      "options": ["Nothing, AI tools are secure", "Remove all identifying information first", "Ask your manager for permission", "Encrypt the data"],
+      "correct_answer": "Remove all identifying information first",
+      "explanation": "Always anonymize customer data before using AI tools. Replace names with generic labels."
+    }
+  ]
+}

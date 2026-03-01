@@ -1,0 +1,28 @@
+{
+  "description": "Internal code names for Coca-Cola projects and initiatives. Update this list as new projects are created.",
+  "code_names": [
+    "Project Aurora",
+    "Project Titan",
+    "Project Phoenix",
+    "Project Meridian",
+    "Project Catalyst",
+    "Project Horizon",
+    "Initiative Redline",
+    "Initiative Blueprint",
+    "Operation Sunrise",
+    "Coke Zero Sugar Next Gen"
+  ],
+  "competitor_names": [
+    "PepsiCo",
+    "Dr Pepper",
+    "Keurig",
+    "Nestle Waters",
+    "Monster Beverage"
+  ],
+  "proprietary_terms": [
+    "Formula 7X",
+    "Merchandise 7X",
+    "secret formula",
+    "proprietary blend"
+  ]
+}
