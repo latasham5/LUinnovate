@@ -10,46 +10,78 @@
       "lawsuit",
       "union organizing"
     ],
-    "blocked_data_types": ["email", "phone", "ssn", "credit_card", "api_key"],
+    "blocked_data_types": [
+      "email",
+      "phone",
+      "ssn",
+      "credit_card",
+      "api_key"
+    ],
     "block_profanity": true,
-    "profanity_list": ["damn", "hell", "ass", "crap", "wtf", "stfu", "lmao", "bruh", "af", "bs", "smh"],
+    "profanity_list": [
+      "damn",
+      "hell",
+      "ass",
+      "crap",
+      "cussword1",
+      "cussword2",
+      "wtf",
+      "stfu",
+      "lmao",
+      "bruh",
+      "af",
+      "bs",
+      "smh"
+    ],
     "work_hours_only": true,
     "work_hours_start": 8,
     "work_hours_end": 18,
     "max_prompt_length": 2000,
     "block_large_paste": true,
     "paste_threshold": 500,
-    "override_priority": "company_overrides_department"
+    "override_priority": "company_overrides_department",
+    "set_by": "EMP100",
+    "set_at": "2026-03-01T11:39:31.142662"
   },
-  "departments": {},
-  "roles": {
-    "analyst": {
-      "approved_use_cases": ["summarize", "draft email", "market research", "data analysis", "create report"],
-      "restrict_to_approved_only": false,
+  "departments": {
+    "marketing": {
+      "blocked_topics": [
+        "competitor analysis",
+        "ad strategy"
+      ],
       "blocked_data_types": [],
-      "max_prompt_length": null
-    },
-    "engineer": {
-      "approved_use_cases": ["summarize", "draft email", "debug help", "code review", "documentation"],
-      "restrict_to_approved_only": false,
-      "blocked_data_types": [],
-      "max_prompt_length": null
-    },
-    "manager": {
-      "approved_use_cases": ["summarize", "draft email", "team update", "create report", "project planning", "code review"],
-      "restrict_to_approved_only": false,
-      "blocked_data_types": [],
-      "max_prompt_length": null
+      "blocked_keywords": [],
+      "block_profanity": true,
+      "additional_profanity": [],
+      "approved_use_cases": [
+        "summarize",
+        "draft email",
+        "market research"
+      ],
+      "restrict_to_approved_only": true,
+      "work_hours_only": null,
+      "work_hours_start": null,
+      "work_hours_end": null,
+      "max_prompt_length": null,
+      "block_large_paste": null,
+      "paste_threshold": null,
+      "set_by": "EMP010",
+      "set_at": "2026-03-01T11:39:31.146390"
     }
   },
+  "roles": {},
   "custom_keywords": {
     "company": [
       "secret formula",
       "merchandise 7x",
       "coca-cola recipe",
       "ingredient list",
-      "syrup ratio",
-      "vault combination"
+      "syrup ratio"
+    ],
+    "dept:marketing": [
+      "campaign budget",
+      "influencer rates",
+      "ad spend"
     ]
   }
 }
