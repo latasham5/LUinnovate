@@ -43,9 +43,10 @@ export async function analyzePrompt(prompt: string): Promise<AnalysisResult> {
     policy_mode: "BALANCED",
   });
 
-  const riskLevel = data.severity === "RED"
+  // Use the new severity_color field from backend
+  const riskLevel = data.severity_color === "RED"
     ? "high"
-    : data.severity === "ORANGE"
+    : data.severity_color === "ORANGE"
     ? "medium"
     : "low";
 
@@ -55,6 +56,7 @@ export async function analyzePrompt(prompt: string): Promise<AnalysisResult> {
       ? "needs-review"
       : "safe";
 
+  // Map ALL backend categories to frontend display names
   const categories = (data.detected_categories || []).map((cat: string) => {
     const mapping: Record<string, string> = {
       PII: "PII",
@@ -63,8 +65,10 @@ export async function analyzePrompt(prompt: string): Promise<AnalysisResult> {
       HEALTH: "Health",
       INTERNAL: "Internal",
       CUSTOMER_INFO: "PII",
-      CODE_NAMES: "Internal",
-      REGULATED_CONTENT: "Health",
+      INTERNAL_CODE_NAME: "Internal",
+      REGULATED: "Health",
+      PROPRIETARY: "Internal",
+      GENERAL: "Internal",
     };
     return (mapping[cat] || cat) as any;
   });
@@ -77,7 +81,7 @@ export async function analyzePrompt(prompt: string): Promise<AnalysisResult> {
     explanation: data.explanation || `Risk score: ${data.risk_score}. Action: ${data.action}`,
     saferPrompt: data.rewritten_prompt || null,
     originalPrompt: prompt,
-    aiResponse: data.ai_response || null,
+    aiResponse: data.response_content || null,
   };
 }
 
@@ -89,7 +93,7 @@ export async function submitPrompt(
     policy_mode: "BALANCED",
   });
   return {
-    response: data.ai_response || "Your prompt has been processed by CokeGPT.",
+    response: data.response_content || "Your prompt has been processed by CokeGPT.",
   };
 }
 
