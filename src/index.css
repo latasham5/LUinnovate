@@ -87,10 +87,10 @@ body {
   outline-offset: 2px;
 }
 
-/* Text size variants */
-.text-size-sm { font-size: 14px; }
-.text-size-md { font-size: 16px; }
-.text-size-lg { font-size: 18px; }
+/* Text size variants — scale everything via CSS zoom so Tailwind utilities respond */
+.text-size-sm { zoom: 0.9; }
+.text-size-md { zoom: 1; }
+.text-size-lg { zoom: 1.15; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
