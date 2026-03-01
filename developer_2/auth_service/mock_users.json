@@ -1,0 +1,58 @@
+{
+  "EMP001": {
+    "name": "Alice Johnson",
+    "role": "analyst",
+    "department": "marketing",
+    "clearance": "standard",
+    "manager": "EMP010",
+    "security_team": "SEC-MKT-01"
+  },
+  "EMP002": {
+    "name": "Bob Smith",
+    "role": "engineer",
+    "department": "engineering",
+    "clearance": "elevated",
+    "manager": "EMP011",
+    "security_team": "SEC-ENG-01"
+  },
+  "EMP003": {
+    "name": "Diana Lopez",
+    "role": "analyst",
+    "department": "finance",
+    "clearance": "standard",
+    "manager": "EMP012",
+    "security_team": "SEC-FIN-01"
+  },
+  "EMP010": {
+    "name": "Carol Davis",
+    "role": "manager",
+    "department": "marketing",
+    "clearance": "elevated",
+    "manager": "EMP100",
+    "security_team": "SEC-MKT-01"
+  },
+  "EMP011": {
+    "name": "Frank Wilson",
+    "role": "manager",
+    "department": "engineering",
+    "clearance": "elevated",
+    "manager": "EMP100",
+    "security_team": "SEC-ENG-01"
+  },
+  "EMP012": {
+    "name": "Grace Kim",
+    "role": "manager",
+    "department": "finance",
+    "clearance": "elevated",
+    "manager": "EMP100",
+    "security_team": "SEC-FIN-01"
+  },
+  "EMP100": {
+    "name": "Henry Chen",
+    "role": "director",
+    "department": "executive",
+    "clearance": "admin",
+    "manager": null,
+    "security_team": "SEC-EXEC-01"
+  }
+}
