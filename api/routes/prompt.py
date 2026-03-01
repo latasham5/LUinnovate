@@ -12,7 +12,7 @@ from services.enforcer.auth_service import get_user_profile
 from services.enforcer.policy_service import build_policy_context
 from services.enforcer.action_executor import execute_action
 from services.gatekeeper.prompt_receiver import receive_prompt as gatekeeper_receive
-from shared.enums import ActionType, RiskCategory
+from shared.enums import ActionType, RiskCategory, AiPlatform
 
 router = APIRouter()
 
@@ -21,6 +21,7 @@ class PromptRequest(BaseModel):
     """Incoming prompt from the frontend."""
     raw_prompt: str
     policy_mode: Optional[str] = "BALANCED"  # STRICT, BALANCED, FAST
+    ai_platform: Optional[str] = None  # ChatGPT, Microsoft Copilot, etc.
 
 
 class PromptResponse(BaseModel):
@@ -36,6 +37,7 @@ class PromptResponse(BaseModel):
     risk_score: float = 0.0
     explanation: str = ""
     detected_details: list[dict] = []
+    ai_platform: Optional[str] = None
 
 
 @router.post("/", response_model=PromptResponse)
@@ -84,6 +86,7 @@ async def handle_prompt(request: PromptRequest, user: dict = Depends(get_current
             raw_prompt=request.raw_prompt,
             analysis=analysis,
             policy_context=policy_context,
+            ai_platform=request.ai_platform,
         )
     except Exception:
         pass  # Logging failure should not break the response
@@ -123,4 +126,5 @@ async def handle_prompt(request: PromptRequest, user: dict = Depends(get_current
         risk_score=analysis.risk_score,
         explanation=explanation,
         detected_details=detected_details,
+        ai_platform=request.ai_platform,
     )

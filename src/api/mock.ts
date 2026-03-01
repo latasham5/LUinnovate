@@ -24,6 +24,7 @@ const MOCK_AUDIT_EVENTS: AuditEvent[] = [
     policyVersion: "v2.4",
     redactedSnippet: "Send the [API_KEY_REDACTED] to the vendor...",
     reason: "API key detected in outgoing prompt",
+    ai_platform: "ChatGPT",
   },
   {
     id: "audit-2",
@@ -35,6 +36,7 @@ const MOCK_AUDIT_EVENTS: AuditEvent[] = [
     policyVersion: "v2.4",
     redactedSnippet: "Contact [EMAIL_REDACTED] regarding the...",
     reason: "Email address detected in prompt",
+    ai_platform: "Microsoft Copilot",
   },
   {
     id: "audit-3",
@@ -46,6 +48,7 @@ const MOCK_AUDIT_EVENTS: AuditEvent[] = [
     policyVersion: "v2.4",
     redactedSnippet: "Summarize the [INTERNAL_REDACTED] document...",
     reason: "Internal keyword detected, low severity under balanced policy",
+    ai_platform: "Google Gemini",
   },
   {
     id: "audit-4",
@@ -58,6 +61,7 @@ const MOCK_AUDIT_EVENTS: AuditEvent[] = [
     redactedSnippet:
       "Process payment for [CARD_REDACTED] belonging to [EMAIL_REDACTED]...",
     reason: "Credit card number and email detected",
+    ai_platform: "GitHub Copilot",
   },
   {
     id: "audit-5",
@@ -69,6 +73,7 @@ const MOCK_AUDIT_EVENTS: AuditEvent[] = [
     policyVersion: "v2.4",
     redactedSnippet: "The [HEALTH_INFO_REDACTED] for this case shows...",
     reason: "Health-related keyword detected in outgoing prompt",
+    ai_platform: "Claude",
   },
   {
     id: "audit-6",
@@ -80,6 +85,7 @@ const MOCK_AUDIT_EVENTS: AuditEvent[] = [
     policyVersion: "v2.4",
     redactedSnippet: "Here is the [TOKEN_REDACTED] for the service...",
     reason: "Authentication token detected",
+    ai_platform: "Custom/Other",
   },
   {
     id: "audit-7",
@@ -91,6 +97,7 @@ const MOCK_AUDIT_EVENTS: AuditEvent[] = [
     policyVersion: "v2.4",
     redactedSnippet: "Call [PHONE_REDACTED] and ask about...",
     reason: "Phone number detected in prompt",
+    ai_platform: "ChatGPT",
   },
 ];
 

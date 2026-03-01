@@ -13,6 +13,7 @@ import type {
   AnalysisResult,
   FlaggedEvent,
   UserRisk,
+  AiPlatform,
 } from "../types/index.ts";
 import { PolicyMode } from "../types/index.ts";
 import {
@@ -41,6 +42,7 @@ interface UserSnapshot {
   flaggedEvents: FlaggedEvent[];
   userRisk: UserRisk;
   lastAnalysis: AnalysisResult | null;
+  selectedPlatform: AiPlatform;
 }
 
 /* ── State shape ───────────────────────────────────────────────── */
@@ -62,6 +64,8 @@ interface AppState {
   chatHistory: ChatSession[];
   activeChatId: string | null;
   isViewingHistory: boolean;
+  // AI platform
+  selectedPlatform: AiPlatform;
 }
 
 interface AppContextValue extends AppState {
@@ -82,6 +86,8 @@ interface AppContextValue extends AppState {
   startNewChat: () => void;
   loadChat: (sessionId: string) => void;
   deleteChat: (sessionId: string) => void;
+  // AI platform
+  setSelectedPlatform: (platform: AiPlatform) => void;
 }
 
 /* ── Seed messages ─────────────────────────────────────────────── */
@@ -134,6 +140,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  /* ── AI platform state ──────────────────────────────────────── */
+  const [selectedPlatform, setSelectedPlatform] = useState<AiPlatform>("ChatGPT");
 
   /* ── Chat session state ─────────────────────────────────────── */
   // Per-user snapshot map: userId -> full state snapshot
@@ -209,9 +218,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         flaggedEvents: [...flaggedEvents],
         userRisk: { ...userRisk },
         lastAnalysis,
+        selectedPlatform,
       };
     },
-    [flaggedEvents, userRisk, lastAnalysis]
+    [flaggedEvents, userRisk, lastAnalysis, selectedPlatform]
   );
 
   /** Restore a user's full snapshot (or return fresh defaults) */
@@ -223,12 +233,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setFlaggedEvents([...snap.flaggedEvents]);
       setUserRisk({ ...snap.userRisk });
       setLastAnalysis(snap.lastAnalysis);
+      setSelectedPlatform(snap.selectedPlatform ?? "ChatGPT");
     } else {
       setMessages([...INITIAL_MESSAGES]);
       setActiveChatId(`chat-${Date.now()}`);
       setFlaggedEvents([]);
       setUserRisk({ ...DEFAULT_RISK });
       setLastAnalysis(null);
+      setSelectedPlatform("ChatGPT");
     }
     setIsViewingHistory(false);
   }, []);
@@ -338,6 +350,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         chatHistory,
         activeChatId,
         isViewingHistory,
+        selectedPlatform,
         setPolicyMode,
         setTextSize,
         toggleHighContrast,
@@ -353,6 +366,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         startNewChat,
         loadChat,
         deleteChat,
+        setSelectedPlatform,
       }}
     >
       {children}

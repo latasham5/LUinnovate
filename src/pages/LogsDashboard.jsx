@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, TrendingDown, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { BarChart3, TrendingDown, ShieldCheck, AlertTriangle, Monitor } from 'lucide-react';
 import LogTable from '../components/LogTable';
 import { MOCK_LOGS } from '../data/mockData';
 import { auditService } from '../api/index.ts';
@@ -36,6 +36,7 @@ export default function LogsDashboard() {
           policyVersion: e.policy_mode,
           confidence: e.risk_score / 100,
           snippet: e.redacted_snippet,
+          aiPlatform: e.ai_platform || 'ChatGPT',
         }));
         setLogs(mapped);
       })
@@ -57,6 +58,15 @@ export default function LogsDashboard() {
           (logs.reduce((sum, l) => sum + l.confidence, 0) / totalEvents) * 100
         )
       : 0;
+
+  // Find top platform
+  const platformCounts = {};
+  logs.forEach((l) => {
+    if (l.aiPlatform) {
+      platformCounts[l.aiPlatform] = (platformCounts[l.aiPlatform] || 0) + 1;
+    }
+  });
+  const topPlatform = Object.entries(platformCounts).sort((a, b) => b[1] - a[1])[0];
 
   const stats = [
     {
@@ -83,6 +93,12 @@ export default function LogsDashboard() {
       icon: <TrendingDown size={18} />,
       color: 'text-[#1d6e17] bg-emerald-50',
     },
+    {
+      label: 'Top Platform',
+      value: topPlatform ? topPlatform[0] : '—',
+      icon: <Monitor size={18} />,
+      color: 'text-blue-700 bg-blue-50',
+    },
   ];
 
   return (
@@ -95,7 +111,7 @@ export default function LogsDashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {stats.map((s) => (
           <div
             key={s.label}

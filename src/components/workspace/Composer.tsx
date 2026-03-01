@@ -10,6 +10,7 @@ import {
   generateId,
 } from "../../api/index.ts";
 import type { ChatMessage, AuditEvent } from "../../types/index.ts";
+import PlatformSelector from "./PlatformSelector.tsx";
 
 interface ComposerProps {
   onInterceptOpen: () => void;
@@ -31,6 +32,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
     startNewChat,
     lastAnalysis,
     user,
+    selectedPlatform,
   } = useApp();
 
   const handleSend = useCallback(async () => {
@@ -51,6 +53,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
           riskLevel: result.riskLevel,
           redactedSnippet:
             result.saferPrompt?.slice(0, 80) ?? trimmed.slice(0, 80),
+          ai_platform: selectedPlatform,
         });
         onInterceptOpen();
         setIsAnalyzing(false);
@@ -66,6 +69,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
         role: "user",
         content: trimmed,
         timestamp: Date.now(),
+        ai_platform: selectedPlatform,
       };
       addMessage(userMsg);
       setText("");
@@ -102,6 +106,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
     addFlaggedEvent,
     addMessage,
     onInterceptOpen,
+    selectedPlatform,
   ]);
 
   const handleUseSaferPrompt = useCallback(
@@ -114,6 +119,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
         content: saferPrompt,
         timestamp: Date.now(),
         wasRewritten: true,
+        ai_platform: selectedPlatform,
       };
       addMessage(userMsg);
       setText("");
@@ -132,6 +138,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
         policyVersion: "v2.4",
         redactedSnippet: saferPrompt.slice(0, 80),
         reason: `Original prompt was rewritten. Original: "${originalPrompt.slice(0, 40)}..."`,
+        ai_platform: selectedPlatform,
       };
       addAuditEvent(auditEvent);
 
@@ -160,7 +167,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
         textareaRef.current?.focus();
       }
     },
-    [addMessage, setUserRisk, setIsSubmitting, setLastAnalysis, lastAnalysis, user]
+    [addMessage, setUserRisk, setIsSubmitting, setLastAnalysis, lastAnalysis, user, selectedPlatform]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -189,6 +196,7 @@ export default function Composer({ onInterceptOpen }: ComposerProps) {
             </button>
           </div>
         )}
+        <PlatformSelector />
         <label htmlFor="composer-input" className="sr-only">
           Message to AI tool
         </label>

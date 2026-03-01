@@ -5,6 +5,7 @@ import SafetyWarning from '../components/SafetyWarning';
 import SaferRewritePanel from '../components/SaferRewritePanel';
 import { analyzePrompt as mockAnalyze, rewritePrompt } from '../data/mockData';
 import { promptService } from '../api/index.ts';
+import { AI_PLATFORMS } from '../types/index.ts';
 
 /**
  * EmployeeView — Coca-Cola themed main prompt interface.
@@ -17,6 +18,7 @@ export default function EmployeeView({ mode }) {
   const [rewritten, setRewritten] = useState('');
   const [saferSent, setSaferSent] = useState(false);
   const [aiResponse, setAiResponse] = useState('');
+  const [selectedPlatform, setSelectedPlatform] = useState('ChatGPT');
 
   const handleAnalyze = useCallback(
     async (prompt) => {
@@ -32,6 +34,7 @@ export default function EmployeeView({ mode }) {
         const backendResult = await promptService.analyzePrompt({
           prompt_text: prompt,
           policy_mode: mode,
+          ai_platform: selectedPlatform,
         });
 
         // Map backend response to the shape our components expect
@@ -77,7 +80,7 @@ export default function EmployeeView({ mode }) {
 
       setAnalyzing(false);
     },
-    [mode]
+    [mode, selectedPlatform]
   );
 
   const handleSendSafer = () => {
@@ -94,6 +97,22 @@ export default function EmployeeView({ mode }) {
         <p className="text-sm text-neutral-500 mt-1">
           Type your prompt below. The safety layer will analyze it before sending to the AI.
         </p>
+      </div>
+
+      <div className="flex items-center gap-2 mb-2">
+        <label htmlFor="ev-platform-select" className="text-xs font-medium text-neutral-500 whitespace-nowrap">
+          Sending to:
+        </label>
+        <select
+          id="ev-platform-select"
+          value={selectedPlatform}
+          onChange={(e) => setSelectedPlatform(e.target.value)}
+          className="rounded-lg border border-neutral-200 px-2.5 py-1 text-xs font-medium text-neutral-700 focus:border-[#ea0000] focus:ring-0 focus:outline-none"
+        >
+          {AI_PLATFORMS.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
       </div>
 
       <PromptInput onAnalyze={handleAnalyze} analyzing={analyzing} />

@@ -7,16 +7,19 @@ import type {
   AuditEvent,
   RiskLevel,
   DetectionCategory,
+  AiPlatform,
 } from "../types/index.ts";
 import KpiCards from "../components/audit/KpiCards.tsx";
 import AuditFilters from "../components/audit/AuditFilters.tsx";
 import BarChart from "../components/audit/BarChart.tsx";
+import PlatformChart from "../components/audit/PlatformChart.tsx";
 import AuditTable from "../components/audit/AuditTable.tsx";
 
 export default function AuditPage() {
   const [events, setEvents] = useState<AuditEvent[]>([]);
   const [severity, setSeverity] = useState<RiskLevel | "all">("all");
   const [category, setCategory] = useState<DetectionCategory | "all">("all");
+  const [platform, setPlatform] = useState<AiPlatform | "all">("all");
 
   useEffect(() => {
     let mounted = true;
@@ -54,6 +57,7 @@ export default function AuditPage() {
           policyVersion: e.policy_mode,
           redactedSnippet: e.redacted_snippet,
           reason: `Risk score: ${e.risk_score}`,
+          ai_platform: (e as any).ai_platform || undefined,
         }));
         setEvents(mapped);
       })
@@ -73,9 +77,10 @@ export default function AuditPage() {
     return events.filter((e) => {
       if (severity !== "all" && e.severity !== severity) return false;
       if (category !== "all" && !e.categories.includes(category)) return false;
+      if (platform !== "all" && e.ai_platform !== platform) return false;
       return true;
     });
-  }, [events, severity, category]);
+  }, [events, severity, category, platform]);
 
   return (
     <main className="flex-1 overflow-y-auto p-6" id="main-content">
@@ -102,11 +107,15 @@ export default function AuditPage() {
         <AuditFilters
           severity={severity}
           category={category}
+          platform={platform}
           onSeverityChange={setSeverity}
           onCategoryChange={setCategory}
+          onPlatformChange={setPlatform}
         />
 
         <BarChart events={filtered} />
+
+        <PlatformChart events={filtered} />
 
         <AuditTable events={filtered} />
       </div>

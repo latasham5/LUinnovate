@@ -153,6 +153,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-strict',
     confidence: 0.97,
     snippet: 'Prompt contained SSN pattern',
+    aiPlatform: 'ChatGPT',
   },
   {
     id: 2,
@@ -164,6 +165,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-strict',
     confidence: 0.95,
     snippet: 'API key included in prompt',
+    aiPlatform: 'Microsoft Copilot',
   },
   {
     id: 3,
@@ -175,6 +177,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-balanced',
     confidence: 0.91,
     snippet: 'Credit card number referenced',
+    aiPlatform: 'Google Gemini',
   },
   {
     id: 4,
@@ -186,6 +189,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-balanced',
     confidence: 0.78,
     snippet: 'Project code name mentioned',
+    aiPlatform: 'GitHub Copilot',
   },
   {
     id: 5,
@@ -197,6 +201,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-strict',
     confidence: 0.88,
     snippet: 'Patient health identifier found',
+    aiPlatform: 'Claude',
   },
   {
     id: 6,
@@ -208,6 +213,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-balanced',
     confidence: 0.82,
     snippet: 'Production SQL query detected',
+    aiPlatform: 'Custom/Other',
   },
   {
     id: 7,
@@ -219,6 +225,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-fast',
     confidence: 0.85,
     snippet: 'Employee email address shared',
+    aiPlatform: 'ChatGPT',
   },
   {
     id: 8,
@@ -230,6 +237,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-strict',
     confidence: 0.93,
     snippet: 'HIPAA-regulated data in prompt',
+    aiPlatform: 'Google Gemini',
   },
   {
     id: 9,
@@ -241,6 +249,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-strict',
     confidence: 0.96,
     snippet: 'Bearer token pasted in prompt',
+    aiPlatform: 'Microsoft Copilot',
   },
   {
     id: 10,
@@ -252,6 +261,7 @@ export const MOCK_LOGS = [
     policyVersion: 'v2.4-fast',
     confidence: 0.72,
     snippet: 'Customer contact info included',
+    aiPlatform: 'ChatGPT',
   },
 ];
 
@@ -267,6 +277,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['PII', 'Credentials'],
     recommendedTraining: 'Handling Sensitive Identifiers',
     lastIncident: '2026-02-28',
+    topPlatforms: ['ChatGPT', 'Microsoft Copilot'],
   },
   {
     id: 2,
@@ -276,6 +287,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['PII', 'Credentials'],
     recommendedTraining: 'Secure AI Prompt Practices',
     lastIncident: '2026-02-28',
+    topPlatforms: ['ChatGPT', 'Google Gemini'],
   },
   {
     id: 3,
@@ -285,6 +297,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['Financial'],
     recommendedTraining: 'PCI Compliance Basics',
     lastIncident: '2026-02-27',
+    topPlatforms: ['Google Gemini'],
   },
   {
     id: 4,
@@ -294,6 +307,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['Internal Code Name'],
     recommendedTraining: null,
     lastIncident: '2026-02-27',
+    topPlatforms: ['GitHub Copilot'],
   },
   {
     id: 5,
@@ -303,6 +317,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['Regulated', 'PII'],
     recommendedTraining: 'HIPAA & AI Data Handling',
     lastIncident: '2026-02-27',
+    topPlatforms: ['Claude', 'ChatGPT'],
   },
   {
     id: 6,
@@ -312,6 +327,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['Internal Code Name'],
     recommendedTraining: null,
     lastIncident: '2026-02-26',
+    topPlatforms: ['Custom/Other', 'GitHub Copilot'],
   },
   {
     id: 7,
@@ -321,6 +337,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['PII'],
     recommendedTraining: null,
     lastIncident: '2026-02-26',
+    topPlatforms: ['ChatGPT'],
   },
   {
     id: 8,
@@ -330,6 +347,7 @@ export const MOCK_EMPLOYEES = [
     categories: ['Regulated'],
     recommendedTraining: 'Regulated Data & AI Systems',
     lastIncident: '2026-02-26',
+    topPlatforms: ['Google Gemini', 'Microsoft Copilot'],
   },
 ];
 

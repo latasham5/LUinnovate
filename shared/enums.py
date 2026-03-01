@@ -70,3 +70,13 @@ class UserRole(str, Enum):
     DEPARTMENT_ADMIN = "DEPARTMENT_ADMIN"
     CYBERSECURITY = "CYBERSECURITY"
     SYSTEM_ADMIN = "SYSTEM_ADMIN"
+
+
+class AiPlatform(str, Enum):
+    """AI platforms that employees may use."""
+    CHATGPT = "ChatGPT"
+    MICROSOFT_COPILOT = "Microsoft Copilot"
+    GOOGLE_GEMINI = "Google Gemini"
+    GITHUB_COPILOT = "GitHub Copilot"
+    CLAUDE = "Claude"
+    CUSTOM_OTHER = "Custom/Other"

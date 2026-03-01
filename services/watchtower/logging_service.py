@@ -20,6 +20,7 @@ async def log_prompt_event(
     raw_prompt: str,
     analysis,
     policy_context,
+    ai_platform: Optional[str] = None,
 ) -> str:
     """Write the complete structured record. Returns incident_id."""
     incident_id = f"INC_{uuid.uuid4().hex[:12]}"
@@ -41,6 +42,7 @@ async def log_prompt_event(
         "rewrite_explanation": analysis.rewrite_explanation,
         "detectors_run": analysis.detectors_run,
         "scan_duration_ms": analysis.scan_duration_ms,
+        "ai_platform": ai_platform,
     }
     _prompt_events.append(event)
     return incident_id

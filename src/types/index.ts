@@ -1,3 +1,22 @@
+/* ── AI Platform tracking ──────────────────────────────────────── */
+
+export type AiPlatform =
+  | "ChatGPT"
+  | "Microsoft Copilot"
+  | "Google Gemini"
+  | "GitHub Copilot"
+  | "Claude"
+  | "Custom/Other";
+
+export const AI_PLATFORMS: AiPlatform[] = [
+  "ChatGPT",
+  "Microsoft Copilot",
+  "Google Gemini",
+  "GitHub Copilot",
+  "Claude",
+  "Custom/Other",
+];
+
 /* ── Frontend-only UI types ─────────────────────────────────────── */
 
 export type TextSize = "sm" | "md" | "lg";
@@ -16,6 +35,7 @@ export interface ChatMessage {
   timestamp: number;
   wasFlagged?: boolean;
   wasRewritten?: boolean;
+  ai_platform?: AiPlatform;
 }
 
 /* ── Backend-aligned enums ─────────────────────────────────────── */
@@ -99,6 +119,7 @@ export interface PromptRequest {
   prompt_text: string;
   context?: string;
   policy_mode?: PolicyMode;
+  ai_platform?: AiPlatform;
 }
 
 export interface RiskFlag {
@@ -210,6 +231,7 @@ export interface AuditEntry {
   categories: RiskCategory[];
   policy_mode: PolicyMode;
   redacted_snippet: string;
+  ai_platform?: AiPlatform;
 }
 
 export interface AuditFilters {
@@ -276,6 +298,7 @@ export interface AuditEvent {
   policyVersion: string;
   redactedSnippet: string;
   reason: string;
+  ai_platform?: AiPlatform;
 }
 
 export interface UserRisk {
@@ -291,4 +314,5 @@ export interface FlaggedEvent {
   categories: DetectionCategory[];
   riskLevel: RiskLevel;
   redactedSnippet: string;
+  ai_platform?: AiPlatform;
 }

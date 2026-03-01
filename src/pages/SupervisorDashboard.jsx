@@ -6,8 +6,10 @@ import {
   GraduationCap,
   ChevronRight,
   ShieldAlert,
+  Monitor,
 } from 'lucide-react';
 import TrainingModal from '../components/TrainingModal';
+import PlatformBadge from '../components/common/PlatformBadge.tsx';
 import { MOCK_EMPLOYEES, TRAINING_MODULES } from '../data/mockData';
 import { adminService } from '../api/index.ts';
 
@@ -74,6 +76,7 @@ export default function SupervisorDashboard() {
 
   const totalFlags = employees.reduce((s, e) => s + e.flags, 0);
   const needsTraining = employees.filter((e) => e.flags >= FLAG_THRESHOLD).length;
+  const distinctPlatforms = new Set(employees.flatMap((e) => e.topPlatforms || [])).size;
 
   return (
     <div className="space-y-5">
@@ -85,7 +88,7 @@ export default function SupervisorDashboard() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard
           icon={<Users size={18} />}
           value={employees.length}
@@ -109,6 +112,12 @@ export default function SupervisorDashboard() {
           value={TRAINING_MODULES.length}
           label="Training Modules"
           color="text-[#1d6e17] bg-emerald-50"
+        />
+        <StatCard
+          icon={<Monitor size={18} />}
+          value={distinctPlatforms}
+          label="Platforms in Use"
+          color="text-blue-700 bg-blue-50"
         />
       </div>
 
@@ -154,6 +163,18 @@ export default function SupervisorDashboard() {
                     >
                       {cat}
                     </span>
+                  ))}
+                </div>
+              )}
+
+              {/* AI Platforms Used */}
+              {emp.topPlatforms && emp.topPlatforms.length > 0 && (
+                <div className="px-5 pb-3 flex flex-wrap gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mr-1 self-center">
+                    Platforms:
+                  </span>
+                  {emp.topPlatforms.map((plat) => (
+                    <PlatformBadge key={plat} platform={plat} />
                   ))}
                 </div>
               )}

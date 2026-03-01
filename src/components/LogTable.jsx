@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Filter, Clock, ShieldCheck, ShieldX, ShieldAlert } from 'lucide-react';
+import PlatformBadge from './common/PlatformBadge.tsx';
 
 /**
  * LogTable — Coca-Cola themed filterable log table.
@@ -27,18 +28,21 @@ const CATEGORY_BADGE = {
 };
 
 const ALL_CATEGORIES = ['All', 'PII', 'Credentials', 'Financial', 'Internal Code Name', 'Regulated'];
+const ALL_PLATFORMS = ['All', 'ChatGPT', 'Microsoft Copilot', 'Google Gemini', 'GitHub Copilot', 'Claude', 'Custom/Other'];
 
 export default function LogTable({ logs }) {
   const [categoryFilter, setCategoryFilter] = useState('All');
+  const [platformFilter, setPlatformFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
   const filtered = logs.filter((log) => {
     const matchesCategory = categoryFilter === 'All' || log.category === categoryFilter;
+    const matchesPlatform = platformFilter === 'All' || log.aiPlatform === platformFilter;
     const matchesSearch =
       !searchTerm ||
       log.snippet.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.user.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesPlatform && matchesSearch;
   });
 
   const formatTime = (iso) => {
@@ -77,6 +81,23 @@ export default function LogTable({ logs }) {
           ))}
         </div>
 
+        {/* Platform pills */}
+        <div className="flex flex-wrap gap-1.5">
+          {ALL_PLATFORMS.map((plat) => (
+            <button
+              key={plat}
+              onClick={() => setPlatformFilter(plat)}
+              className={`text-xs px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${
+                platformFilter === plat
+                  ? 'bg-[#ea0000] text-white border-[#ea0000]'
+                  : 'bg-white text-neutral-600 border-neutral-200 hover:border-[#ea0000]/40'
+              }`}
+            >
+              {plat}
+            </button>
+          ))}
+        </div>
+
         {/* Search */}
         <input
           type="text"
@@ -94,6 +115,7 @@ export default function LogTable({ logs }) {
             <tr className="bg-neutral-50 text-left text-xs font-bold text-neutral-500 uppercase tracking-wider">
               <th className="px-5 py-3">Timestamp</th>
               <th className="px-5 py-3">User</th>
+              <th className="px-5 py-3">Platform</th>
               <th className="px-5 py-3">Category</th>
               <th className="px-5 py-3">Action</th>
               <th className="px-5 py-3">Policy</th>
@@ -109,6 +131,9 @@ export default function LogTable({ logs }) {
                   {formatTime(log.timestamp)}
                 </td>
                 <td className="px-5 py-3 font-semibold text-black">{log.user}</td>
+                <td className="px-5 py-3">
+                  {log.aiPlatform && <PlatformBadge platform={log.aiPlatform} />}
+                </td>
                 <td className="px-5 py-3">
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${CATEGORY_BADGE[log.category] || 'bg-neutral-100 text-neutral-600'}`}>
                     {log.category}
@@ -139,7 +164,7 @@ export default function LogTable({ logs }) {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
+                <td colSpan={8} className="px-5 py-8 text-center text-neutral-400">
                   No matching log entries found.
                 </td>
               </tr>

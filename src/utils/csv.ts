@@ -4,6 +4,7 @@ export function exportAuditCsv(events: AuditEvent[]): void {
   const headers = [
     "Time",
     "User",
+    "Platform",
     "Severity",
     "Categories",
     "Action",
@@ -14,6 +15,7 @@ export function exportAuditCsv(events: AuditEvent[]): void {
   const rows = events.map((e) => [
     new Date(e.timestamp).toISOString(),
     e.user,
+    e.ai_platform || "",
     e.severity,
     e.categories.join("; "),
     e.action,

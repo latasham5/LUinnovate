@@ -1,10 +1,13 @@
-import type { RiskLevel, DetectionCategory } from "../../types/index.ts";
+import type { RiskLevel, DetectionCategory, AiPlatform } from "../../types/index.ts";
+import { AI_PLATFORMS } from "../../types/index.ts";
 
 interface AuditFiltersProps {
   severity: RiskLevel | "all";
   category: DetectionCategory | "all";
+  platform: AiPlatform | "all";
   onSeverityChange: (v: RiskLevel | "all") => void;
   onCategoryChange: (v: DetectionCategory | "all") => void;
+  onPlatformChange: (v: AiPlatform | "all") => void;
 }
 
 const SEVERITIES: (RiskLevel | "all")[] = ["all", "low", "medium", "high"];
@@ -20,8 +23,10 @@ const CATEGORIES: (DetectionCategory | "all")[] = [
 export default function AuditFilters({
   severity,
   category,
+  platform,
   onSeverityChange,
   onCategoryChange,
+  onPlatformChange,
 }: AuditFiltersProps) {
   return (
     <fieldset className="flex flex-wrap items-center gap-4 mb-6">
@@ -68,6 +73,30 @@ export default function AuditFilters({
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
               {c === "all" ? "All Categories" : c}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <label
+          htmlFor="filter-platform"
+          className="text-xs font-medium text-gray-500"
+        >
+          Platform
+        </label>
+        <select
+          id="filter-platform"
+          value={platform}
+          onChange={(e) =>
+            onPlatformChange(e.target.value as AiPlatform | "all")
+          }
+          className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:border-brand-red focus:ring-0 focus:outline-none"
+        >
+          <option value="all">All Platforms</option>
+          {AI_PLATFORMS.map((p) => (
+            <option key={p} value={p}>
+              {p}
             </option>
           ))}
         </select>

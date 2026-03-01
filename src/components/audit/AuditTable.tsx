@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Eye, X } from "lucide-react";
 import type { AuditEvent } from "../../types/index.ts";
 import { RiskBadge, CategoryChip } from "../common/StatusBadge.tsx";
+import PlatformBadge from "../common/PlatformBadge.tsx";
 
 interface AuditTableProps {
   events: AuditEvent[];
@@ -28,6 +29,12 @@ export default function AuditTable({ events }: AuditTableProps) {
                   className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
                 >
                   User
+                </th>
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                >
+                  Platform
                 </th>
                 <th
                   scope="col"
@@ -79,6 +86,11 @@ export default function AuditTable({ events }: AuditTableProps) {
                     {event.user}
                   </td>
                   <td className="px-4 py-3">
+                    {event.ai_platform && (
+                      <PlatformBadge platform={event.ai_platform} />
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
                     <RiskBadge level={event.severity} />
                   </td>
                   <td className="px-4 py-3">
@@ -119,7 +131,7 @@ export default function AuditTable({ events }: AuditTableProps) {
               {events.length === 0 && (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-4 py-8 text-center text-gray-400"
                   >
                     No audit events match the current filters.
@@ -170,6 +182,14 @@ export default function AuditTable({ events }: AuditTableProps) {
                   {selectedEvent.user}
                 </dd>
               </div>
+              {selectedEvent.ai_platform && (
+                <div>
+                  <dt className="text-xs font-medium text-gray-500">Platform</dt>
+                  <dd className="mt-0.5">
+                    <PlatformBadge platform={selectedEvent.ai_platform} />
+                  </dd>
+                </div>
+              )}
               <div>
                 <dt className="text-xs font-medium text-gray-500">Severity</dt>
                 <dd className="mt-0.5">
