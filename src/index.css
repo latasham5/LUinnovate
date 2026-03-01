@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/*
+ * Coca-Cola Brand Theme
+ * Primary Red: #F40009 / #ea0000
+ * Dark Red (hover): #D00008 / #c50000
+ * Black: #000000
+ * Grays: #353535, #4f4f4f, #6c6c6c, #d5d5d5, #eeeeee
+ * Positive: #1d6e17
+ * Warning: #725d27
+ */
+
 @theme {
   --color-brand-red: #F40009;
   --color-brand-red-hover: #D00008;
@@ -22,7 +32,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   background-color: #ffffff;
   color: var(--color-gray-900);
@@ -102,6 +112,9 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--color-gray-300);
   border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
 }
 
 /* ===== Dark Mode ===== */
