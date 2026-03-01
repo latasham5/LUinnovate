@@ -6,6 +6,12 @@
       "runtimeExecutable": "C:\\Users\\Selam\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
       "runtimeArgs": ["-m", "uvicorn", "main:app", "--reload", "--port", "8000"],
       "port": 8000
+    },
+    {
+      "name": "phantom-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "frontend"],
+      "port": 5173
     }
   ]
 }
