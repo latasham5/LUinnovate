@@ -1,0 +1,94 @@
+{
+  "users": [
+    {
+      "employee_id": "EMP001",
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@coca-cola.com",
+      "role": "analyst",
+      "department": "Marketing",
+      "department_id": "DEPT_MKT",
+      "clearance_level": "standard",
+      "manager_id": "MGR001"
+    },
+    {
+      "employee_id": "EMP002",
+      "name": "Michael Chen",
+      "email": "michael.chen@coca-cola.com",
+      "role": "analyst",
+      "department": "Finance",
+      "department_id": "DEPT_FIN",
+      "clearance_level": "standard",
+      "manager_id": "MGR002"
+    },
+    {
+      "employee_id": "EMP003",
+      "name": "Jessica Williams",
+      "email": "jessica.williams@coca-cola.com",
+      "role": "senior_analyst",
+      "department": "Supply Chain",
+      "department_id": "DEPT_SCH",
+      "clearance_level": "elevated",
+      "manager_id": "MGR003"
+    },
+    {
+      "employee_id": "MGR001",
+      "name": "David Martinez",
+      "email": "david.martinez@coca-cola.com",
+      "role": "manager",
+      "department": "Marketing",
+      "department_id": "DEPT_MKT",
+      "clearance_level": "elevated",
+      "manager_id": "DIR001"
+    },
+    {
+      "employee_id": "MGR002",
+      "name": "Emily Davis",
+      "email": "emily.davis@coca-cola.com",
+      "role": "manager",
+      "department": "Finance",
+      "department_id": "DEPT_FIN",
+      "clearance_level": "elevated",
+      "manager_id": "DIR001"
+    },
+    {
+      "employee_id": "MGR003",
+      "name": "Robert Taylor",
+      "email": "robert.taylor@coca-cola.com",
+      "role": "manager",
+      "department": "Supply Chain",
+      "department_id": "DEPT_SCH",
+      "clearance_level": "elevated",
+      "manager_id": "DIR001"
+    },
+    {
+      "employee_id": "DIR001",
+      "name": "Amanda Wilson",
+      "email": "amanda.wilson@coca-cola.com",
+      "role": "director",
+      "department": "Operations",
+      "department_id": "DEPT_OPS",
+      "clearance_level": "executive",
+      "manager_id": null
+    },
+    {
+      "employee_id": "SEC001",
+      "name": "James Anderson",
+      "email": "james.anderson@coca-cola.com",
+      "role": "security_admin",
+      "department": "Cybersecurity",
+      "department_id": "DEPT_SEC",
+      "clearance_level": "top_secret",
+      "manager_id": "DIR001"
+    },
+    {
+      "employee_id": "ADM001",
+      "name": "System Administrator",
+      "email": "admin@coca-cola.com",
+      "role": "admin",
+      "department": "IT",
+      "department_id": "DEPT_IT",
+      "clearance_level": "top_secret",
+      "manager_id": null
+    }
+  ]
+}
