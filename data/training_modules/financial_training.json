@@ -1,0 +1,25 @@
+{
+  "module_id": "financial_training",
+  "title": "Financial Data Security",
+  "description": "Learn to protect sensitive financial and regulated business data.",
+  "estimated_minutes": 10,
+  "scenarios": [
+    {
+      "id": "FIN_S1",
+      "title": "Revenue Data in Summary Request",
+      "description": "You need AI to summarize quarterly results. Which approach is safe?",
+      "unsafe_example": "Summarize: Q3 revenue was $4.2B with 18.3% gross margin. EBITDA grew 12% YoY to $1.8B.",
+      "safe_example": "Help me create a template for summarizing quarterly financial results with sections for revenue, margins, and growth metrics.",
+      "explanation": "Never share exact financial figures. Ask for templates or use approximate/fictional numbers."
+    }
+  ],
+  "quiz": [
+    {
+      "question_id": "FIN_Q1",
+      "question": "Which of the following is safe to include in an AI prompt?",
+      "options": ["Exact quarterly revenue figures", "Specific profit margins", "A request for a financial report template", "Unreleased earnings guidance"],
+      "correct_answer": "A request for a financial report template",
+      "explanation": "Asking for templates is safe. Sharing exact financial data or unreleased figures is not."
+    }
+  ]
+}

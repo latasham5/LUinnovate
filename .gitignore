@@ -7,20 +7,48 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Frontend
 node_modules
 dist
 dist-ssr
 *.local
 .vite/
 
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+build/
+eggs/
+*.egg
+venv/
+.venv/
+env/
+
+# spaCy models (downloaded at runtime)
+models/
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Distribution
+*.tar.gz
+*.whl
+
 # Gradle files
 .gradle/
-build/
 
-# Local configuration file (sdk path, etc)
+# Local configuration file
 local.properties
 
-# Android Studio generated files and folders
+# Android Studio
 captures/
 .externalNativeBuild/
 .cxx/
@@ -28,9 +56,13 @@ captures/
 *.apk
 output-metadata.json
 
-# IntelliJ
+# IDE
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
 *.iml
-.idea
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
@@ -39,16 +71,15 @@ render.experimental.xml
 *.jks
 *.keystore
 
-# Google Services (e.g. APIs or Firebase)
+# Google Services
 google-services.json
 
 # Android Profiling
 *.hprof
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+# OS
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj

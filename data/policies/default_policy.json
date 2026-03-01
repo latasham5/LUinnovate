@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "effective_date": "2026-01-01",
+  "description": "Default Phantom App security policy for prompt interception",
+  "rules": [
+    {
+      "rule_id": "RULE_001",
+      "category": "CREDENTIALS",
+      "description": "Block any prompt containing API keys, passwords, tokens, or internal URLs",
+      "threshold": 0.0,
+      "action": "BLOCKED",
+      "enabled": true
+    },
+    {
+      "rule_id": "RULE_002",
+      "category": "PII",
+      "description": "Rewrite prompts containing personally identifiable information",
+      "threshold": 40.0,
+      "action": "REWRITTEN",
+      "enabled": true
+    },
+    {
+      "rule_id": "RULE_003",
+      "category": "FINANCIAL",
+      "description": "Rewrite prompts containing sensitive financial data",
+      "threshold": 40.0,
+      "action": "REWRITTEN",
+      "enabled": true
+    },
+    {
+      "rule_id": "RULE_004",
+      "category": "CUSTOMER_INFO",
+      "description": "Rewrite prompts containing customer-specific information",
+      "threshold": 40.0,
+      "action": "REWRITTEN",
+      "enabled": true
+    },
+    {
+      "rule_id": "RULE_005",
+      "category": "PROPRIETARY",
+      "description": "Warn on prompts containing proprietary business information",
+      "threshold": 30.0,
+      "action": "ALLOWED_WITH_WARNING",
+      "enabled": true
+    },
+    {
+      "rule_id": "RULE_006",
+      "category": "INTERNAL_CODE_NAME",
+      "description": "Rewrite prompts referencing internal project code names",
+      "threshold": 30.0,
+      "action": "REWRITTEN",
+      "enabled": true
+    },
+    {
+      "rule_id": "RULE_007",
+      "category": "REGULATED",
+      "description": "Block prompts containing HIPAA, SOX, or legally privileged content",
+      "threshold": 50.0,
+      "action": "BLOCKED",
+      "enabled": true
+    },
+    {
+      "rule_id": "RULE_008",
+      "category": "GENERAL",
+      "description": "Allow general prompts with no sensitive content",
+      "threshold": 0.0,
+      "action": "ALLOWED",
+      "enabled": true
+    }
+  ]
+}
