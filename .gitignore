@@ -1,12 +1,24 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.vite/
+
 # Gradle files
 .gradle/
 build/
 
 # Local configuration file (sdk path, etc)
 local.properties
-
-# Log/OS Files
-*.log
 
 # Android Studio generated files and folders
 captures/
@@ -18,7 +30,7 @@ output-metadata.json
 
 # IntelliJ
 *.iml
-.idea/
+.idea
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
@@ -32,6 +44,13 @@ google-services.json
 
 # Android Profiling
 *.hprof
-node_modules/
-dist/
-.vite/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
